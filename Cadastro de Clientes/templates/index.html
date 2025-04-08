@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Clientes</title>
+    <link rel="stylesheet" href="/Cadastro-de-Clientes-manual/Cadastro de Clientes/static/style.css" />
+  </head>
+  <body>
+    <header></header>
+  
+    <div class="container">
+      <aside>
+        <div class="aside-header">
+          Clientes
+        </div>
+      </aside>
+  
+      <main>
+        <section id="clientes">
+          <h2>CLIENTES</h2>
+          <hr />
+          <div class="busca">
+            <input type="text" placeholder="Pesquisar" />
+            <button>Pesquisar</button>
+          </div>
+          <div class="total-clientes">
+            <button class="btn-total">Total</button>
+            <div class="quantidade-clientes">21 Clientes</div>
+          </div>
+        </section>
+  
+        <section id="cadastro">
+          <div class="tabs">
+            <button class="tab-button">Geral</button>
+            <button class="tab-button">Endereço</button>
+          </div>
+  
+          <h2>CADASTRAR</h2>
+  
+          <form>
+            <div class="form-linha">
+              <div>
+                <label>Nome</label>
+                <input type="text" placeholder="Digite o Nome" />
+              </div>
+            </div>
+  
+            <div class="form-row">
+                <div class="form-group">
+                  <label>CPF/CNPJ</label>
+                  <input type="text" placeholder="Digite o CPF ou CNPJ">
+                </div>
+              
+                <div class="form-group short">
+                  <label>RG</label>
+                  <input type="text" placeholder="Digite o RG">
+                </div>
+              
+                <div class="form-group short">
+                  <label>Data de Nascimento</label>
+                  <input type="text" placeholder="dd/mm/aaaa">
+                </div>
+              </div>
+  
+            <div class="form-linha">
+              <div>
+                <h3>CONTATOS</h3>
+                <label>Celular</label>
+                <input type="text" placeholder="Digite o número do Celular" />
+                <label>Email</label>
+                <input type="email" placeholder="Digite o Email" />
+              </div>
+            </div>
+  
+            <button class="btn-registrar">Registrar</button>
+          </form>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

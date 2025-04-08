@@ -1,0 +1,187 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #D9D9D9;
+    overflow: auto;
+    height: 100vh;
+}
+
+header {
+    background-color: #5634E0;
+    height: 80px;
+    width: 100%;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
+    position: relative;
+    z-index: 2;
+}
+
+aside {
+    background-color: #fff;
+    width: 410px;
+    height: 846px;
+    border-top-right-radius: 10px;
+    margin-top: 45px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
+    position: relative;
+    z-index: 2;
+}
+
+main {
+    background-color: #D9D9D9;
+    width: 1417px;
+    height: 821px;
+}
+
+section {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 1390px;
+    margin: 45px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
+}
+
+#clientes {
+    height: 246px;
+}
+
+#cadastro {
+    height: 513px;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 80px);
+    /* ocupa toda a tela menos o header */
+}
+
+.aside-header {
+    margin: 30px;
+}
+
+h2,
+h3 {
+    color: #5634E0;
+    ;
+}
+
+button {
+    background-color: #5c3dff;
+    /* Roxo */
+    color: white;
+    font-weight: 600;
+    /* SemiBold */
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    width: 160px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* sombra leve, opcional */
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #4a2fe0;
+    /* tom um pouco mais escuro no hover */
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    /* espaço entre os botões */
+    margin-bottom: 20px;
+    /* ou ajuste como quiser */
+}
+
+.tab-button {
+    width: 103px;
+    height: 31px;
+    background-color: #5c3dff;
+    color: white;
+    font-weight: 500;
+    /* Medium */
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color 0.3s ease;
+}
+
+.tab-button:hover {
+    background-color: #4a2fe0;
+}
+
+.btn-registrar {
+    background-color: #5c3dff;
+    color: white;
+    font-weight: 600;
+    /* SemiBold */
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    width: 230px;
+    height: 60px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.btn-registrar:hover {
+    background-color: #4a2fe0;
+}
+
+.btn-total {
+    background-color: #5c3dff;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+
+    width: 160px;
+    height: 50px;
+
+    cursor: default;
+    transition: none;
+
+    border-radius: 0;
+    /* zera tudo primeiro */
+
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.btn-total:hover {
+    background-color: #5c3dff;
+}
+
+.quantidade {
+    border: 1px black;
+}
+
+.quantidade-clientes {
+    border: 1px solid black;
+    color: #5c3dff;;
+    padding: 10px 12px;
+    border-radius: 0 10px 10px 0;
+    font-weight: 600;
+    display: inline-block;
+    height: 50px;
+    line-height: 30px;
+    /* ajuste até ficar centralizado */
+    vertical-align: top;
+    /* ou middle */
+    margin-left: -4px;
+    /* remove espaço entre os dois blocos */
+}
