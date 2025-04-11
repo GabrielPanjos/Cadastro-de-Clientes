@@ -183,7 +183,7 @@ button {
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
 }
 
-#linha {
+#linha-horizontal {
     width: 1320px;
     /* Largura da linha (100% do contêiner pai) */
     height: 1px;
@@ -237,14 +237,14 @@ label {
     display: flex;
     justify-content: space-between;
     /* Espaça os elementos para as extremidades */
-    margin-right: 150px;
+    margin-right: 140px;
 }
 
 .cadastrar-clientes-container {
     display: flex;
     justify-content: space-between;
     /* Espaça os elementos para as extremidades */
-    margin-right: 180px;
+    margin-right: 80px;
     margin-bottom: 40px;
 }
 
@@ -257,6 +257,21 @@ label {
 }
 
 
-.div-cima > div {
-    margin-bottom: 50px; /* Espaço entre as divs dentro de "div-cima" */
+.div-cima>div {
+    margin-bottom: 50px;
+    /* Espaço entre as divs dentro de "div-cima" */
+}
+
+.tab-button {
+    width: 100px;
+    height: 30px;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: -25px;
+    margin-left: 50px;
 }
