@@ -1,0 +1,277 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+header {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 2;
+    /* Z-index do header */
+    background-color: #5634E0;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
+
+main {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 1;
+    /* Z-index do main */
+    display: flex;
+    /* Define o main como um contêiner flexível */
+    background-color: #D9D9D9;
+    height: calc(100% - 60px);
+    width: 100%;
+}
+
+aside {
+    background-color: #fff;
+    width: 410px;
+    /* Largura fixa para o aside */
+    height: 865px;
+    margin-top: 46px;
+    border-top-right-radius: 5px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
+
+#conteudo {
+    display: flex;
+    /* Define o contêiner das seções como flexível */
+    flex-direction: column;
+    /* Coloca as seções em coluna */
+    flex: 1;
+    /* Permite que o contêiner ocupe o espaço restante */
+    margin: 20px;
+    /* Margem para o contêiner das seções */
+}
+
+#selecionar-clientes {
+    background-color: #5634E0;
+    height: 60px;
+    border-top-right-radius: 5px;
+    color: #fff;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+section {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    background-color: #fff;
+    margin: 25px;
+    border-radius: 5px;
+}
+
+#pesquisar-clientes {
+    height: 266px;
+}
+
+#cadastrar-clientes {
+    height: 502px;
+}
+
+h2 {
+    color: #5634E0;
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+    margin: 30px;
+}
+
+input {
+    padding-left: 10px;
+    width: 160px;
+    height: 40px;
+    border: 1px solid #323136;
+    border-radius: 5px 5px 5px 5px;
+    color: #323136;
+    font-weight: 500;
+    /* Define o peso da fonte como semibold */
+}
+
+#input-pesquisar {
+    border-radius: 5px 0 0 5px;
+}
+
+input::placeholder {
+    color: #323136;
+}
+
+button {
+    border: none;
+    background-color: #5634E0;
+    color: #fff;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+.btn-medio {
+    width: 160px;
+    height: 40px;
+}
+
+.btn-press {
+    cursor: pointer;
+}
+
+#btn-pesquisar {
+    border-radius: 0 5px 5px 0;
+}
+
+#btn-total {
+    border-radius: 5px 0 0 5px;
+}
+
+#input-pesquisar {
+    width: 400px;
+}
+
+.pesquisar-container {
+    display: flex;
+    /* Usar flexbox para alinhar os elementos */
+}
+
+.pesquisar-clientes-container {
+    display: flex;
+    /* Usar flexbox para alinhar os elementos */
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    align-items: center;
+    /* Alinha verticalmente os itens ao centro */
+    margin: 30px;
+    /* Margem para o contêiner */
+    margin-top: 80px;
+    /* Adiciona espaço acima da div */
+    margin-right: 100px;
+}
+
+.total-container {
+    display: flex;
+    /* Usar flexbox para alinhar o botão e o texto */
+    align-items: center;
+    /* Alinha verticalmente os itens ao centro */
+}
+
+#contagem-clientes {
+    display: flex;
+    /* Usar flexbox para garantir que o texto esteja centralizado */
+    align-items: center;
+    /* Alinha verticalmente o texto */
+    justify-content: center;
+    width: 120px;
+    height: 40px;
+    border: 1px solid #323136;
+    border-radius: 0 5px 5px 0;
+    color: #5634E0;
+    font-size: 15px;
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
+
+#linha-horizontal {
+    width: 1320px;
+    /* Largura da linha (100% do contêiner pai) */
+    height: 1px;
+    /* Altura da linha */
+    background-color: #323136;
+    /* Cor da linha */
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    /* Faz a label ocupar toda a largura disponível */
+    margin-bottom: 5px;
+    /* Espaço entre a label e o input */
+    font-weight: bold;
+    /* Deixa a label em negrito (opcional) */
+    font-weight: 500;
+    display: block;
+    /* Faz a label ocupar toda a largura disponível */
+}
+
+.btn-registrar {
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    margin: 30px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.form-container {
+    margin: 30px;
+}
+
+.div-cima {
+    margin-bottom: 50px;
+}
+
+.div-baixo {
+    display: flex;
+}
+
+.div-baixo>div {
+    flex: 1;
+    /* Permite que cada campo ocupe espaço igual */
+    margin-right: 30px;
+    /* Espaço entre os campos */
+}
+
+.dois-h2 {
+    display: flex;
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    margin-right: 140px;
+}
+
+.cadastrar-clientes-container {
+    display: flex;
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    margin-right: 80px;
+    margin-bottom: 40px;
+}
+
+#nome {
+    width: 800px;
+}
+
+.input-form {
+    width: 246px;
+}
+
+
+.div-cima>div {
+    margin-bottom: 50px;
+    /* Espaço entre as divs dentro de "div-cima" */
+}
+
+.tab-button {
+    width: 100px;
+    height: 30px;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: -25px;
+    margin-left: 50px;
+}
