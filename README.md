@@ -15,5 +15,4 @@ Este repositório contém o código-fonte de um site de **cadastro de clientes**
 - **Python** (Flask ou Django - escolha qual você utilizou)
 - **HTML/CSS** para o frontend
 - **JavaScript** para interatividade
-- **SQLite** ou outro banco de dados (especificar o que foi utilizado)
-- **Bootstrap** para estilização responsiva (se utilizado)
+- **MySQL** para o banco de dados
