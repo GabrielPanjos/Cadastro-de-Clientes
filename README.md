@@ -1,7 +1,3 @@
-Aqui está uma versão atualizada do seu README com as informações fornecidas:
-
----
-
 # 📋 Cadastro de Clientes
 
 Este repositório contém o código-fonte de um site de **cadastro de clientes**, desenvolvido como parte de um trabalho acadêmico. A aplicação foi construída utilizando **Python** para o backend, com foco em fornecer uma **interface simples e funcional** para o registro, visualização e gerenciamento de informações de clientes.
