@@ -1,189 +1,312 @@
- * {
-     font-family: Arial, Helvetica, sans-serif;
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
- }
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
- body {
-     background-color: #D9D9D9;
-     overflow: auto;
-     height: 100vh;
- }
+html,
+body {
+    height: 100%;
+}
 
- header {
-     background-color: #5634E0;
-     height: 80px;
-     width: 100%;
-     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
-     position: relative;
-     z-index: 2;
- }
+header {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 2;
+    /* Z-index do header */
+    background-color: #5634E0;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
 
- .container {
-     display: flex;
-     height: auto; /* em vez de height fixo */
- }
+main {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 1;
+    /* Z-index do main */
+    display: flex;
+    /* Define o main como um contêiner flexível */
+    background-color: #D9D9D9;
+    height: calc(100% - 60px);
+    width: 100%;
+}
 
- aside {
-     background-color: #fff;
-     width: 270px;
-     border-top-right-radius: 10px;
-     margin-top: 45px;
-     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
- }
+aside {
+    background-color: #fff;
+    width: 410px;
+    /* Largura fixa para o aside */
+    height: 865px;
+    margin-top: 46px;
+    border-top-right-radius: 5px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
 
- .aside-header {
-     background-color: #5c3dff;
-     color: white;
-     padding: 20px;
-     border-top-right-radius: 10px;
-     font-weight: 600;
-     font-size: 18px;
- }
-
- main {
+#conteudo {
+    display: flex;
+    /* Define o contêiner das seções como flexível */
+    flex-direction: column;
+    /* Coloca as seções em coluna */
     flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    height: 100%; /* garante que ele preencha o container */
-  }
+    /* Permite que o contêiner ocupe o espaço restante */
+    margin: 20px;
+    /* Margem para o contêiner das seções */
+}
 
- section {
-     background-color: #fff;
-     border-radius: 10px;
-     margin: 25px;
-     margin-bottom: 24px;
-     padding: 20px;
-     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.250);
- }
+#selecionar-clientes {
+    background-color: #5634E0;
+    height: 60px;
+    border-top-right-radius: 5px;
+    color: #fff;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
 
- #clientes {
-     height: 260px;
- }
+section {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    background-color: #fff;
+    margin: 25px;
+    border-radius: 5px;
+}
 
- h2,
- h3 {
-     color: #5634E0;
-     margin-bottom: 10px;
- }
+#pesquisar-clientes {
+    height: 266px;
+}
 
- hr {
-     border: none;
-     border-top: 1px solid #ccc;
-     margin-bottom: 15px;
- }
+#cadastrar-clientes {
+    height: 502px;
+}
 
- .busca {
-     display: flex;
-     margin-bottom: 20px;
- }
+h2 {
+    color: #5634E0;
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+    margin: 30px;
+}
 
- .busca input {
-     flex: 1;
-     padding: 10px;
-     border: 1px solid #ccc;
-     border-radius: 10px 0 0 10px;
- }
+input {
+    padding-left: 10px;
+    width: 160px;
+    height: 40px;
+    border: 1px solid #323136;
+    border-radius: 5px 5px 5px 5px;
+    color: #323136;
+    font-weight: 500;
+    /* Define o peso da fonte como semibold */
+}
 
- .busca button {
-     background-color: #5c3dff;
-     color: white;
-     font-weight: 600;
-     border: none;
-     padding: 10px 20px;
-     border-radius: 0 10px 10px 0;
-     cursor: pointer;
- }
+#input-pesquisar {
+    border-radius: 5px 0 0 5px;
+}
 
- .total-clientes {
-     display: flex;
-     align-items: center;
-     justify-content: flex-end;
- }
+input::placeholder {
+    color: #323136;
+}
 
- .btn-total {
-     background-color: #5c3dff;
-     color: white;
-     font-weight: 600;
-     font-size: 16px;
-     border: none;
-     height: 50px;
-     padding: 0 20px;
-     border-radius: 10px 0 0 10px;
- }
+button {
+    border: none;
+    background-color: #5634E0;
+    color: #fff;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
 
- .quantidade-clientes {
-     border: 1px solid #ccc;
-     color: #5c3dff;
-     font-weight: 600;
-     padding: 10px 20px;
-     height: 50px;
-     display: flex;
-     align-items: center;
-     border-radius: 0 10px 10px 0;
- }
+.btn-medio {
+    width: 160px;
+    height: 40px;
+}
 
- .tabs {
-     display: flex;
-     gap: 10px;
-     margin-bottom: 20px;
- }
+.btn-press {
+    cursor: pointer;
+}
 
- .tab-button {
-     background-color: #5c3dff;
-     color: white;
-     font-weight: 500;
-     font-size: 15px;
-     border: none;
-     border-radius: 10px;
-     padding: 5px 15px;
-     cursor: pointer;
- }
+#btn-pesquisar {
+    border-radius: 0 5px 5px 0;
+}
 
- form {
-     display: flex;
-     flex-direction: column;
-     gap: 20px;
- }
+#btn-total {
+    border-radius: 5px 0 0 5px;
+}
 
- .form-linha {
-     display: flex;
-     gap: 20px;
- }
+#input-pesquisar {
+    width: 400px;
+}
 
- .form-linha input {
-     padding: 10px;
-     border-radius: 5px;
-     border: 1px solid #aaa;
-     width: 100%;
- }
+.pesquisar-container {
+    display: flex;
+    /* Usar flexbox para alinhar os elementos */
+}
 
- .form-linha label {
-     margin-bottom: 5px;
-     font-weight: bold;
- }
+.pesquisar-clientes-container {
+    display: flex;
+    /* Usar flexbox para alinhar os elementos */
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    align-items: center;
+    /* Alinha verticalmente os itens ao centro */
+    margin: 30px;
+    /* Margem para o contêiner */
+    margin-top: 80px;
+    /* Adiciona espaço acima da div */
+    margin-right: 100px;
+}
 
- .form-linha div {
-     display: flex;
-     flex-direction: column;
-     flex: 1;
- }
+.total-container {
+    display: flex;
+    /* Usar flexbox para alinhar o botão e o texto */
+    align-items: center;
+    /* Alinha verticalmente os itens ao centro */
+}
 
- .contatos {
-     justify-content: flex-end;
-     margin-top: 10px;
- }
+#contagem-clientes {
+    display: flex;
+    /* Usar flexbox para garantir que o texto esteja centralizado */
+    align-items: center;
+    /* Alinha verticalmente o texto */
+    justify-content: center;
+    width: 120px;
+    height: 40px;
+    border: 1px solid #323136;
+    border-radius: 0 5px 5px 0;
+    color: #5634E0;
+    font-size: 15px;
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
 
- .btn-registrar {
-     align-self: flex-start;
-     background-color: #5c3dff;
-     color: white;
-     font-weight: 600;
-     font-size: 16px;
-     border: none;
-     border-radius: 10px;
-     width: 230px;
-     height: 60px;
-     cursor: pointer;
- }
+#linha-horizontal {
+    width: 1320px;
+    /* Largura da linha (100% do contêiner pai) */
+    height: 1px;
+    /* Altura da linha */
+    background-color: #323136;
+    /* Cor da linha */
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    /* Faz a label ocupar toda a largura disponível */
+    margin-bottom: 5px;
+    /* Espaço entre a label e o input */
+    font-weight: bold;
+    /* Deixa a label em negrito (opcional) */
+    font-weight: 500;
+    display: block;
+    /* Faz a label ocupar toda a largura disponível */
+}
+
+.btn-registrar {
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    margin: 30px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.form-container {
+    margin: 30px;
+}
+
+.div-cima {
+    margin-bottom: 50px;
+}
+
+.div-baixo {
+    display: flex;
+}
+
+.div-baixo>div {
+    flex: 1;
+    /* Permite que cada campo ocupe espaço igual */
+    margin-right: 30px;
+    /* Espaço entre os campos */
+}
+
+.dois-h2 {
+    display: flex;
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    margin-right: 140px;
+}
+
+.cadastrar-clientes-container {
+    display: flex;
+    justify-content: space-between;
+    /* Espaça os elementos para as extremidades */
+    margin-right: 80px;
+    margin-bottom: 40px;
+}
+
+.div-button {
+    margin-top: 80px;
+    /* ajuste o valor conforme necessário */
+}
+
+#nome {
+    width: 800px;
+}
+
+.input-form {
+    width: 246px;
+}
+
+
+.div-cima>div {
+    margin-bottom: 50px;
+    /* Espaço entre as divs dentro de "div-cima" */
+}
+
+.tab-button {
+    width: 100px;
+    height: 30px;
+    border-radius: 5px 5px 0 0;
+    font-weight: 600;
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: -25px;
+    margin-left: 50px;
+}
+
+#linha-vertial {
+    height: 340px;
+    width: 1px;
+    background-color: #323136;
+}
+
+.div-cima-2>div,
+.div-baixo-2>div {
+    margin-right: 30px;
+}
+
+
+.div-cima-2 {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.div-baixo-2 {
+    display: flex;
+}
+
+#endereco {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container-2 {
+    margin: 30px;
+}
