@@ -287,27 +287,26 @@ label {
     background-color: #323136;
 }
 
-.div-cima-2 {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 50px;
+.div-cima-2>div,
+.div-baixo-2>div {
+    margin-right: 30px;
 }
 
-.div-cima-2>div {
-    flex: 1;
-    /* Permite que cada campo ocupe espaço igual */
+
+.div-cima-2 {
+    display: flex;
+    margin-bottom: 50px;
 }
 
 .div-baixo-2 {
     display: flex;
 }
 
-.div-baixo-2>div {
-    flex: 1;
-    /* Permite que cada campo ocupe espaço igual */
-}
-
 #endereco {
     display: flex;
     flex-direction: column;
+}
+
+.form-container-2 {
+    margin: 30px;
 }
