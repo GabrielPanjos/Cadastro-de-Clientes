@@ -28,3 +28,4 @@ document.getElementById('btn-geral').addEventListener("click", () => {
 document.getElementById('btn-endereco').addEventListener("click", () => {
     mostrarSecao("endereco")
 })
+
