@@ -310,3 +310,57 @@ label {
 .form-container-2 {
     margin: 30px;
 }
+
+thead th {
+    border-radius: 5px 5px 0 0;
+    padding: 12px;
+    background-color: #ffffff;
+    color: #5634E0;
+
+}
+
+.nome_lista {
+    
+}
+
+.CPF_lista {
+
+}
+
+.acao_lista {
+
+}
+
+table,
+th,
+td {
+    font-weight: 600;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+    text-align: left;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    text-align: center;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    text-align: right;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #eee;
+}
+
+tbody td {
+    padding: 10px;
+}

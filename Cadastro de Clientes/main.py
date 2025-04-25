@@ -1,18 +1,36 @@
-from flask import Flask, url_for, render_template
+from flask import Flask, render_template
+from routes.home import home_route
+from routes.cliente import cliente_route
+import mysql.connector
 
 # inicialização
 app = Flask(__name__)
 
-# rotas
-@app.route('/')
-def ola_mundo():
-    return render_template('index.html')
-
-@app.route('/sobre')
-def pagina_sobre():
-    return """
-    <b>Pereira aprendendo Flask</b>
-    """
+app.register_blueprint(home_route)
+app.register_blueprint(cliente_route, url_prefix='/clientes')
 
 # execução
+app.run(debug=True)
+
+@app.route('/')
+def index():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM clientes")  # Conta o número total de clientes
+    total_clientes = cursor.fetchone()[0]  # Recupera o número de clientes
+    conn.close()
+    return render_template('index.html', total_clientes=total_clientes)  # Passa a contagem para o template
+
+
+
+
+def get_db_connection():
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Mamae38.",
+        database="school_universe"  # Certifique-se de que o banco de dados é o correto
+    )
+    return conn
+
 app.run(debug=True)
