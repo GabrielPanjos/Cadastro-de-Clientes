@@ -1,5 +1,4 @@
-btnGeral = document.getElementById("btn-geral");
-btnEndereco = document.getElementById("btn-endereco");
+
 
 function mostrarSecao(secaoId) {
     document.getElementById("geral").style.display = "none";
@@ -27,4 +26,20 @@ document.getElementById('btn-geral').addEventListener("click", () => {
 
 document.getElementById('btn-endereco').addEventListener("click", () => {
     mostrarSecao("endereco")
+})
+
+function listar_clientes() {
+    document.getElementById("geral").style.display = "none";
+    document.getElementById('endereco').style.display = "none";
+    document.getElementById('h2-contatos').style.display = "none";
+    document.getElementById('h2-cadastrar').style.display = "none";
+    document.getElementById("btn-geral").style.display = "none";
+    document.getElementById("btn-endereco").style.display = "none";
+
+    document.getElementById("listar").style.display = "";
+
+}
+
+document.getElementById('btn-pesquisar').addEventListener("click", () => {
+    listar_clientes();
 })

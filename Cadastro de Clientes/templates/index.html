@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>School Universe</title>
-    <link rel="stylesheet" href="/Cadastro de Clientes/static/style.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <link
       rel="icon"
       type="image/png"
-      href="/Cadastro-de-Clientes-manual/Cadastro de Clientes/images/logosemfundo.png"
+      href="{{ url_for('static', filename='images/logosemfundo.png') }}"
     />
   </head>
   <body>
@@ -16,7 +19,9 @@
 
     <main>
       <aside>
-        <div id="selecionar-clientes">Clientes</div>
+        <a href="{{ url_for('cliente.lista_clientes') }}">
+          <div id="selecionar-clientes">Clientes</div>
+        </a>
       </aside>
 
       <div id="conteudo">
@@ -34,7 +39,7 @@
             </div>
             <div class="total-container">
               <button class="btn-medio" id="btn-total">Total</button>
-              <div id="contagem-clientes">21 Clientes</div>
+              <div id="contagem-clientes">{{ clientes|length }} Clientes</div>
             </div>
           </div>
         </section>
@@ -73,64 +78,151 @@
             <h2 id="h2-contatos">CONTATOS</h2>
           </div>
 
-          <div class="cadastrar-clientes-container" id="geral">
-            <div class="cadastrar-container">
-              <div class="form-container">
-                <div class="div-cima">
-                  <label>Nome</label>
-                  <input type="text" placeholder="Digite o Nome" id="nome" />
-                </div>
-                <div class="div-baixo">
-                  <div>
-                    <label>CPF/CNPJ</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o CPF ou CNPJ"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>RG</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o RG"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>Data de Nascimento</label>
-                    <input
-                      type="text"
-                      placeholder="dd/mm/aaaa"
-                      class="input-form"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="div-button">
-                <button class="btn-registrar btn-press">Registrar</button>
-              </div>
-            </div>
-
-            <div id="linha-vertial"></div>
-
-            <div class="contatos-container">
-              <div class="div-contatos-container">
+          <form action="{{ url_for('cliente.obter_cliente') }}" method="POST">
+            <div class="cadastrar-clientes-container" id="geral">
+              <div class="cadastrar-container">
                 <div class="form-container">
                   <div class="div-cima">
+                    <label>Nome</label>
+                    <input
+                      type="text"
+                      name="nome"
+                      placeholder="Digite o Nome"
+                      id="nome"
+                    />
+                  </div>
+                  <div class="div-baixo">
                     <div>
-                      <label>Celular</label>
+                      <label>CPF/CNPJ</label>
                       <input
                         type="text"
-                        placeholder="Digite o número do Celular"
+                        name="CPF"
+                        placeholder="Digite o CPF ou CNPJ"
                         class="input-form"
                       />
                     </div>
                     <div>
-                      <label>Email</label>
+                      <label>RG</label>
                       <input
-                        type="email"
-                        placeholder="Digite o Email"
+                        type="text"
+                        name="RG"
+                        placeholder="Digite o RG"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Data de Nascimento</label>
+                      <input
+                        type="text"
+                        name="data_nascimento"
+                        placeholder="dd/mm/aaaa"
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="div-button">
+                  <button type="submit" class="btn-registrar btn-press">
+                    Registrar
+                  </button>
+                </div>
+              </div>
+              <div id="linha-vertial"></div>
+              <div class="contatos-container">
+                <div class="div-contatos-container">
+                  <div class="form-container">
+                    <div class="div-cima">
+                      <div>
+                        <label>Celular</label>
+                        <input
+                          type="text"
+                          name="numero_telefone"
+                          placeholder="Digite o número do Celular"
+                          class="input-form"
+                        />
+                      </div>
+                      <div>
+                        <label>Email</label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="Digite o Email"
+                          class="input-form"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="cadastrar-clientes-container-2"
+              id="endereco"
+              style="display: none"
+            >
+              <div class="cadastrar-container-2">
+                <div class="form-container-2">
+                  <div class="div-cima-2">
+                    <div>
+                      <label>Estado</label>
+                      <input
+                        type="text"
+                        name="estado"
+                        placeholder="Digite o Estado"
+                        id="estado"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Cidade</label>
+                      <input
+                        type="text"
+                        name="cidade"
+                        placeholder="Digite a Cidade"
+                        id="cidade"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Rua</label>
+                      <input
+                        type="text"
+                        name="rua"
+                        placeholder="Digite o nome da rua"
+                        id="rua"
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                  <div class="div-baixo-2">
+                    <div>
+                      <label>CEP</label>
+                      <input
+                        type="text"
+                        name="CEP"
+                        placeholder="Digite o CEP"
+                        id="cep"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Bairro</label>
+                      <input
+                        type="text"
+                        name="bairro"
+                        placeholder="Digite o Bairro"
+                        id="bairro"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Complemento</label>
+                      <input
+                        type="text"
+                        name="complemento"
+                        placeholder="Digite um Complemento"
+                        id="complemento"
                         class="input-form"
                       />
                     </div>
@@ -138,79 +230,29 @@
                 </div>
               </div>
             </div>
-          </div>
+          </form>
 
-          <div
-            class="cadastrar-clientes-container-2"
-            id="endereco"
-            style="display: none"
-          >
-            <div class="cadastrar-container-2">
-              <div class="form-container-2">
-                <div class="div-cima-2">
-                  <div>
-                    <label>Estado</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o Estado"
-                      id="estado"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>Cidade</label>
-                    <input
-                      type="text"
-                      placeholder="Digite a Cidade"
-                      id="cidade"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>Rua</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o nome da rua"
-                      id="rua"
-                      class="input-form"
-                    />
-                  </div>
-                </div>
-                <div class="div-baixo-2">
-                  <div>
-                    <label>CEP</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o CEP"
-                      id="cep"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>Bairro</label>
-                    <input
-                      type="text"
-                      placeholder="Digite o Bairro"
-                      id="bairro"
-                      class="input-form"
-                    />
-                  </div>
-                  <div>
-                    <label>Complemento</label>
-                    <input
-                      type="text"
-                      placeholder="Digite um Complemento"
-                      id="complemento"
-                      class="input-form"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="listar-clientes-container" id="listar" style="display: none;">
+            <table>
+              <thead>
+                <tr>
+                  <th class="nome_lista">Nome</th>
+                  <th class="CPF_lista">CPF</th>
+                  <th class="acao_lista">Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="nome_lista">gfagdfgfda</td>
+                  <td class="CPF_lista">234541353</td>
+                  <td class="acao_lista">gfadf</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
       </div>
     </main>
-    <script src="/Cadastro de Clientes/static/js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
