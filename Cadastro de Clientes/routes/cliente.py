@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template
+from flask import request, redirect, url_for, flash, Blueprint, render_template
 from db import get_db_connection
+from datetime import datetime
 
 cliente_route = Blueprint('cliente', __name__)
+
+
 
 @cliente_route.route('/')
 def lista_clientes():
@@ -14,8 +17,32 @@ def lista_clientes():
 
 @cliente_route.route('/', methods=['POST'])
 def obter_cliente():
-    """ inserir os dados do cliente """
-    pass 
+    nome = request.form['nome']
+    cpf = request.form['CPF']
+    rg = request.form['RG']
+    data_nascimento = request.form['data_nascimento']
+    numero_telefone = request.form['numero_telefone']
+    email = request.form['email']
+    estado = request.form['estado']
+    cidade = request.form['cidade']
+    rua = request.form['rua']
+    cep = request.form['CEP']
+    bairro = request.form['bairro']
+    complemento = request.form['complemento']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        INSERT INTO clientes 
+        (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ''', (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('cliente.lista_clientes'))  # Volta para lista de clientes
 
 @cliente_route.route('/new')
 def form_cliente():
