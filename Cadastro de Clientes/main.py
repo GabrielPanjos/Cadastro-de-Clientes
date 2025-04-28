@@ -1,16 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask
 from routes.home import home_route
 from routes.cliente import cliente_route
-import mysql.connector
 
 # inicialização
 app = Flask(__name__)
 
 app.register_blueprint(home_route)
 app.register_blueprint(cliente_route, url_prefix='/clientes')
-
-# execução
-app.run(debug=True)
 
 @app.route('/')
 def index():
@@ -19,10 +15,7 @@ def index():
     cursor.execute("SELECT COUNT(*) FROM clientes")  # Conta o número total de clientes
     total_clientes = cursor.fetchone()[0]  # Recupera o número de clientes
     conn.close()
-    return render_template('index.html', total_clientes=total_clientes)  # Passa a contagem para o template
-
-
-
+    return render_template('index.html', total_clientes=total_clientes)  # Passa a contagem para o template 
 
 def get_db_connection():
     conn = mysql.connector.connect(
@@ -33,4 +26,6 @@ def get_db_connection():
     )
     return conn
 
-app.run(debug=True)
+# execução
+if __name__ == "__main__":
+    app.run(debug=True)

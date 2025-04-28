@@ -1,11 +1,16 @@
 from flask import Blueprint, render_template
+from db import get_db_connection
 
 cliente_route = Blueprint('cliente', __name__)
 
 @cliente_route.route('/')
 def lista_clientes():
-    """ listar os clientes """
-    return render_template('index.html')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM clientes")
+    clientes = cursor.fetchall()
+    conn.close()
+    return render_template('index.html', clientes=clientes)
 
 @cliente_route.route('/', methods=['POST'])
 def obter_cliente():

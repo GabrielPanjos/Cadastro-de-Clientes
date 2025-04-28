@@ -311,56 +311,46 @@ label {
     margin: 30px;
 }
 
-thead th {
-    border-radius: 5px 5px 0 0;
-    padding: 12px;
-    background-color: #ffffff;
+thead {
     color: #5634E0;
-
 }
 
-.nome_lista {
-    
+tbody {
+    color: #323136;
 }
 
-.CPF_lista {
-
-}
-
-.acao_lista {
-
-}
-
-table,
-th,
-td {
+thead,
+tbody {
     font-weight: 600;
+    font-size: 18px;
+}
+
+thead th,
+tbody td {
+    padding: 20px;
+    /* espaço interno nas células */
+}
+
+#listar-clientes-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Centraliza a tabela dentro */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Remove espaçamentos estranhos */
 }
 
-th:nth-child(1),
-td:nth-child(1) {
-    text-align: left;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
+td {
     text-align: center;
 }
 
-th:nth-child(3),
-td:nth-child(3) {
-    text-align: right;
+tbody tr:nth-child(odd) {
+    background-color: #EEEEEE; /* linhas ímpares cinza clarinho */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #eee;
+    background-color: #ffffff; /* linhas pares branco */
 }
 
-tbody td {
-    padding: 10px;
-}

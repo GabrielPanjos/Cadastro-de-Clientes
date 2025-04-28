@@ -38,7 +38,7 @@
               </button>
             </div>
             <div class="total-container">
-              <button class="btn-medio" id="btn-total">Total</button>
+              <button class="btn-medio btn-press" id="btn-total">Total</button>
               <div id="contagem-clientes">{{ clientes|length }} Clientes</div>
             </div>
           </div>
@@ -232,21 +232,40 @@
             </div>
           </form>
 
-          <div class="listar-clientes-container" id="listar" style="display: none;">
+          <div
+            class="listar-clientes-container"
+            id="listar"
+            style="display: none"
+          >
             <table>
               <thead>
                 <tr>
-                  <th class="nome_lista">Nome</th>
-                  <th class="CPF_lista">CPF</th>
-                  <th class="acao_lista">Ação</th>
+                  <div class="div-nome">
+                    <th class="nome">Nome</th>
+                  </div>
+                  <div class="div-cpf">
+                    <th class="cpf">CPF</th>
+                  </div>
+                  <div class="div-acao">
+                    <th class="acao">Ação</th>
+                  </div>
                 </tr>
               </thead>
               <tbody>
+                {% for cliente in clientes %}
                 <tr>
-                  <td class="nome_lista">gfagdfgfda</td>
-                  <td class="CPF_lista">234541353</td>
-                  <td class="acao_lista">gfadf</td>
+                  <div class="div-nome">
+                    <td class="nome">{{ cliente.nome }}</td>
+                  </div>
+                  <div class="div-cpf">
+                    <td class="cpf">{{ cliente.cpf }}</td>
+                  </div>
+                  <div class="div-acao">
+                    <td class="acao"><div id="editar_cliente">Editar</div></td>
+                  </div>
+                  <!-- Outros campos aqui -->
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>

@@ -43,3 +43,7 @@ function listar_clientes() {
 document.getElementById('btn-pesquisar').addEventListener("click", () => {
     listar_clientes();
 })
+
+document.getElementById('btn-total').addEventListener("click", () => {
+    listar_clientes();
+})
