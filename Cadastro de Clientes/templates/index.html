@@ -113,9 +113,8 @@
                     <div>
                       <label>Data de Nascimento</label>
                       <input
-                        type="text"
+                        type="date"
                         name="data_nascimento"
-                        placeholder="dd/mm/aaaa"
                         class="input-form"
                       />
                     </div>
@@ -240,30 +239,21 @@
             <table>
               <thead>
                 <tr>
-                  <div class="div-nome">
-                    <th class="nome">Nome</th>
-                  </div>
-                  <div class="div-cpf">
-                    <th class="cpf">CPF</th>
-                  </div>
-                  <div class="div-acao">
-                    <th class="acao">Ação</th>
-                  </div>
+                  <th class="cliente_id">ID</th>
+                  <th class="nome">Nome</th>
+                  <th class="cpf">CPF</th>
+                  <th class="acao">Ação</th>
                 </tr>
               </thead>
               <tbody>
                 {% for cliente in clientes %}
                 <tr>
-                  <div class="div-nome">
-                    <td class="nome">{{ cliente.nome }}</td>
-                  </div>
-                  <div class="div-cpf">
-                    <td class="cpf">{{ cliente.cpf }}</td>
-                  </div>
-                  <div class="div-acao">
-                    <td class="acao"><div id="editar_cliente">Editar</div></td>
-                  </div>
-                  <!-- Outros campos aqui -->
+                  <td class="cliente_id">{{ cliente.id_clientes }}</td>
+                  <td class="nome">{{ cliente.nome }}</td>
+                  <td class="cpf">{{ cliente.cpf }}</td>
+                  <td class="acao">
+                    <div class="btn-press" id="editar_cliente">Editar</div>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

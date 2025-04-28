@@ -344,6 +344,7 @@ table {
 
 td {
     text-align: center;
+    align-items: center;   
 }
 
 tbody tr:nth-child(odd) {
@@ -354,3 +355,15 @@ tbody tr:nth-child(even) {
     background-color: #ffffff; /* linhas pares branco */
 }
 
+#editar_cliente {
+    display: inline-flex;       /* inline-flex é o segredo para não estourar a altura da linha */
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 40px;               /* altura que você quer */
+    background-color: #5634E0;
+    color: white;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
