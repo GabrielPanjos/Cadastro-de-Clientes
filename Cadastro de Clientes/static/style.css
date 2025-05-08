@@ -334,36 +334,69 @@ tbody td {
 #listar-clientes-container {
     width: 100%;
     display: flex;
-    justify-content: center; /* Centraliza a tabela dentro */
+    justify-content: center;
+    /* Centraliza a tabela dentro */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse; /* Remove espaçamentos estranhos */
+    border-collapse: collapse;
+    /* Remove espaçamentos estranhos */
 }
 
 td {
     text-align: center;
-    align-items: center;   
+    align-items: center;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #EEEEEE; /* linhas ímpares cinza clarinho */
+    background-color: #EEEEEE;
+    /* linhas ímpares cinza clarinho */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #ffffff; /* linhas pares branco */
+    background-color: #ffffff;
+    /* linhas pares branco */
 }
 
-#editar_cliente {
-    display: inline-flex;       /* inline-flex é o segredo para não estourar a altura da linha */
+.btn-editar {
+    display: inline-flex;
+    /* inline-flex é o segredo para não estourar a altura da linha */
     justify-content: center;
     align-items: center;
     width: 130px;
-    height: 40px;               /* altura que você quer */
+    height: 38px;
+    /* altura que você quer */
     background-color: #5634E0;
     color: white;
     border-radius: 5px;
     font-weight: 600;
     font-size: 14px;
 }
+
+#gerenciar-clientes {
+    height: 778px;
+}
+
+.paginacao-clientes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px;
+  }
+  
+  .paginacao-clientes button {
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #5634E0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .paginacao-clientes button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+  

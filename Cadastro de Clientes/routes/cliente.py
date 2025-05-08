@@ -1,4 +1,4 @@
-from flask import request, redirect, url_for, flash, Blueprint, render_template
+from flask import request, redirect, url_for, flash, Blueprint, render_template, jsonify
 from db import get_db_connection
 from datetime import datetime
 
@@ -43,6 +43,27 @@ def obter_cliente():
     conn.close()
 
     return redirect(url_for('cliente.lista_clientes'))  # Volta para lista de clientes
+
+@cliente_route.route('/clientes_api')
+def clientes_api():
+    pagina = int(request.args.get('pagina', 0))
+    por_pagina = 5
+    offset = pagina * por_pagina
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT COUNT(*) as total FROM clientes")
+    total = cursor.fetchone()['total']
+
+    cursor.execute("SELECT * FROM clientes LIMIT %s OFFSET %s", (por_pagina, offset))
+    clientes = cursor.fetchall()
+    conn.close()
+
+    return jsonify({
+        'clientes': clientes,
+        'total': total
+    })
 
 @cliente_route.route('/new')
 def form_cliente():
