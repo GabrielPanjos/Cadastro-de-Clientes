@@ -311,56 +311,105 @@ label {
     margin: 30px;
 }
 
-thead th {
-    border-radius: 5px 5px 0 0;
-    padding: 12px;
-    background-color: #ffffff;
+thead {
     color: #5634E0;
-
 }
 
-.nome_lista {
-    
+tbody {
+    color: #323136;
 }
 
-.CPF_lista {
-
-}
-
-.acao_lista {
-
-}
-
-table,
-th,
-td {
+thead,
+tbody {
     font-weight: 600;
+    font-size: 18px;
+}
+
+thead th,
+tbody td {
+    padding: 20px;
+    /* espaço interno nas células */
+}
+
+#listar-clientes-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* Centraliza a tabela dentro */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    /* Remove espaçamentos estranhos */
 }
 
-th:nth-child(1),
-td:nth-child(1) {
-    text-align: left;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
+td {
     text-align: center;
+    align-items: center;
 }
 
-th:nth-child(3),
-td:nth-child(3) {
-    text-align: right;
+tbody tr:nth-child(odd) {
+    background-color: #EEEEEE;
+    /* linhas ímpares cinza clarinho */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #eee;
+    background-color: #ffffff;
+    /* linhas pares branco */
 }
 
-tbody td {
-    padding: 10px;
+.btn-editar {
+    display: inline-flex;
+    /* inline-flex é o segredo para não estourar a altura da linha */
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 38px;
+    /* altura que você quer */
+    background-color: #5634E0;
+    color: white;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+#gerenciar-clientes {
+    height: 778px;
+}
+
+.paginacao-clientes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px;
+}
+
+.paginacao-clientes button {
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #5634E0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.paginacao-clientes button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    /* Tamanho menor para a mensagem */
+    display: block;
+    /* Garante que a mensagem vá para a próxima linha */
+    margin-top: 5px;
+    /* Espaço entre o input e a mensagem */
+}
+
+label.error {
+    color: red;
 }

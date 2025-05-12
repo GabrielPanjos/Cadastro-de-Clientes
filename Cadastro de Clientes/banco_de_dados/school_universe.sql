@@ -12,18 +12,23 @@ USE school_universe;
 
 -- Tabela de clientes
 CREATE TABLE Clientes (
-    `id_clientes` INT AUTO_INCREMENT PRIMARY KEY,      -- ID único com incremento automático
-    `nome` VARCHAR(255) NOT NULL,                      -- Nome completo do cliente
-    `email` VARCHAR(255),                              -- E-mail do cliente
-    `telefone` VARCHAR(11),                            -- Telefone de contato
-    `cpf` VARCHAR(11) UNIQUE NOT NULL,                 -- CPF sem formatação, deve ser único
-    `data_cadastro` DATE DEFAULT (CURRENT_DATE)        -- Data do cadastro, padrão: data atual
+    id_clientes INT AUTO_INCREMENT PRIMARY KEY,       -- ID único com incremento automático
+    nome VARCHAR(255) NOT NULL,                        -- Nome completo do cliente
+    cpf VARCHAR(11) UNIQUE NOT NULL,                   -- CPF sem formatação
+    rg VARCHAR(20),                                    -- RG do cliente
+    data_nascimento DATE,                              -- Data de nascimento
+    numero_telefone VARCHAR(20),                       -- Número de telefone
+    email VARCHAR(255),                                -- Email do cliente
+    estado VARCHAR(100),                               -- Estado de residência
+    cidade VARCHAR(100),                               -- Cidade de residência
+    rua VARCHAR(255),                                  -- Nome da rua
+    cep VARCHAR(10),                                   -- CEP
+    bairro VARCHAR(100),                               -- Bairro
+    complemento VARCHAR(255),                          -- Complemento (ex: apto, bloco)
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Data de cadastro automática
 );
 
-INSERT INTO Clientes (nome, email, telefone, cpf)
-VALUES ('Gabriel', 'pereiradosanjosgabriel@gmail.com', '11913337174', '12345678910');
-
-# DESCRIBE Clintes;
+# DESCRIBE Clientes;
 # SELECT * FROM Clientes;
 
 # SELECT COUNT(*) FROM clientes;

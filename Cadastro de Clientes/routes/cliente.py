@@ -1,16 +1,110 @@
-from flask import Blueprint, render_template
+from flask import request, redirect, url_for, flash, Blueprint, render_template, jsonify
+from db import get_db_connection
+import re
+import traceback  # Importe traceback
+from datetime import datetime
 
 cliente_route = Blueprint('cliente', __name__)
 
-@cliente_route.route('/')
-def lista_clientes():
-    """ listar os clientes """
-    return render_template('index.html')
-
 @cliente_route.route('/', methods=['POST'])
 def obter_cliente():
-    """ inserir os dados do cliente """
-    pass 
+    try:
+        print("Requisição POST recebida!")
+        print("Dados do formulário:", request.form)
+
+        nome = request.form.get('nome', '').strip()
+        cpf = request.form.get('CPF', '').strip()
+        data_nascimento = request.form.get('data_nascimento', '').strip()
+        email = request.form.get('email', '').strip()
+        numero_telefone = request.form.get('numero_telefone', '').strip()
+        cep = request.form.get('CEP', '').strip()
+
+        # Validação do Nome
+        if not nome:
+            return jsonify({"error": "Erro: Nome não pode estar vazio."}), 400
+
+        # Validação do CPF
+        if not cpf:
+            return jsonify({"error": "Erro: CPF não pode estar vazio."}), 400
+        if not re.match(r'^\d{11}$', cpf):
+            return jsonify({"error": "Erro: CPF deve ter 11 dígitos numéricos."}), 400
+
+        # Validação da Data de Nascimento
+        if not data_nascimento:
+            return jsonify({"error": "Erro: Data de Nascimento não pode estar vazia."}), 400
+        try:
+            datetime.strptime(data_nascimento, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({"error": "Erro: Data de Nascimento em formato inválido (AAAA-MM-DD)."}), 400
+
+        # Validação do Email
+        if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            return jsonify({"error": "Erro: Formato de E-mail inválido."}), 400
+
+        # Validação do Celular
+        if numero_telefone and not re.match(r'^\d{10,11}$', numero_telefone):
+            return jsonify({"error": "Erro: Celular deve ter 10 ou 11 dígitos numéricos."}), 400
+
+        # Validação do CEP
+        if cep and not re.match(r'^\d{8}$', cep):
+            return jsonify({"error": "Erro: CEP deve ter 8 dígitos numéricos."}), 400
+
+        # Se todas as validações passarem, continua com o cadastro
+        rg = request.form['RG']
+        estado = request.form['estado']
+        cidade = request.form['cidade']
+        rua = request.form['rua']
+        bairro = request.form['bairro']
+        complemento = request.form['complemento']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO clientes 
+            (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ''', (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({'message': 'Cliente cadastrado com sucesso!'}), 200
+
+    except Exception as e:
+        print("Erro no servidor:", e)
+        traceback.print_exc()  # Imprime o traceback completo
+        return jsonify({"error": "Erro interno no servidor."}), 500
+
+@cliente_route.route('/')
+def lista_clientes():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM clientes")
+    clientes = cursor.fetchall()
+    conn.close()
+    return render_template('index.html', clientes=clientes)
+
+@cliente_route.route('/clientes_api')
+def clientes_api():
+    pagina = int(request.args.get('pagina', 0))
+    por_pagina = 5
+    offset = pagina * por_pagina
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT COUNT(*) as total FROM clientes")
+    total = cursor.fetchone()['total']
+
+    cursor.execute("SELECT * FROM clientes LIMIT %s OFFSET %s", (por_pagina, offset))
+    clientes = cursor.fetchall()
+    conn.close()
+
+    return jsonify({
+        'clientes': clientes,
+        'total': total
+    })
 
 @cliente_route.route('/new')
 def form_cliente():
