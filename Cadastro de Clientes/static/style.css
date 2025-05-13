@@ -383,9 +383,9 @@ tbody tr:nth-child(even) {
     justify-content: center;
     gap: 20px;
     margin: 10px;
-  }
-  
-  .paginacao-clientes button {
+}
+
+.paginacao-clientes button {
     padding: 8px 20px;
     font-size: 16px;
     background-color: #5634E0;
@@ -393,10 +393,65 @@ tbody tr:nth-child(even) {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .paginacao-clientes button:disabled {
+}
+
+.paginacao-clientes button:disabled {
     background-color: #aaa;
     cursor: not-allowed;
-  }
-  
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    /* Tamanho menor para a mensagem */
+    display: block;
+    /* Garante que a mensagem vá para a próxima linha */
+    margin-top: 5px;
+    /* Espaço entre o input e a mensagem */
+}
+
+label.error {
+    color: red;
+}
+
+#salvar {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    border-radius: 10px;
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#deletar {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    border-radius: 10px;
+    background-color: #FF3D51;
+    width: 110px;
+    height: 35px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#gerenciar-clientes-container {
+    margin: 30px;
+}
+
+#gerenciar-container {
+    display: flex;
+}
+
+#div-esquerda {
+    display: flex;
+    flex-direction: column;
+}
+
+#div-meio {
+    display: flex;
+    flex-direction: column;
+}
+
+#div-direita {
+    display: flex;
+    flex-direction: column;
+}
