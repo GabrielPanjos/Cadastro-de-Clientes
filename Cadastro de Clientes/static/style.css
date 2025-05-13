@@ -203,6 +203,7 @@ label {
     font-weight: 500;
     display: block;
     /* Faz a label ocupar toda a largura disponível */
+    color: #323136;
 }
 
 .btn-registrar {
@@ -414,7 +415,7 @@ label.error {
     color: red;
 }
 
-#salvar {
+.btn-salvar {
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
     border-radius: 10px;
     width: 200px;
@@ -423,7 +424,7 @@ label.error {
     font-weight: 600;
 }
 
-#deletar {
+.btn-deletar {
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
     border-radius: 10px;
     background-color: #FF3D51;
@@ -433,25 +434,45 @@ label.error {
     font-weight: 600;
 }
 
-#gerenciar-clientes-container {
-    margin: 30px;
-}
-
-#gerenciar-container {
+.gerenciar-container {
     display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin: 40px;
 }
 
-#div-esquerda {
-    display: flex;
-    flex-direction: column;
-}
-
-#div-meio {
+.linha {
     display: flex;
     flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    margin-top: 60px;
 }
 
-#div-direita {
+.linha-botoes {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 100px;
+    margin: 40px;
+}
+
+#gerenciador-de-clientes {
+    background-color: #5634E0;
+    height: 60px;
+    width: 100%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    color: #fff;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+.coluna {
+    padding-bottom: 40px;
 }
