@@ -377,6 +377,7 @@ tbody tr:nth-child(even) {
 
 #gerenciar-clientes {
     height: 778px;
+    margin-top: 50px;
 }
 
 .paginacao-clientes {
@@ -434,7 +435,7 @@ label.error {
     font-weight: 600;
 }
 
-.gerenciar-container {
+#form-editar-cliente {
     display: flex;
     justify-content: space-between;
     gap: 40px;
@@ -446,7 +447,7 @@ label.error {
     flex-direction: column;
     gap: 20px;
     flex: 1;
-    margin-top: 60px;
+    margin-top: 50px;
 }
 
 .linha-botoes {
@@ -454,6 +455,7 @@ label.error {
     justify-content: space-between;
     margin-top: 100px;
     margin: 40px;
+    padding-top: 20px;
 }
 
 #gerenciador-de-clientes {

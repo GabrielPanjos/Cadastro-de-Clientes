@@ -1,6 +1,3 @@
-
-
-
 function mostrarSecao(secaoId) {
     document.getElementById("geral").style.display = "none";
     document.getElementById('endereco').style.display = "none";
@@ -30,7 +27,6 @@ document.getElementById('btn-endereco').addEventListener("click", () => {
 })
 
 
-
 function listar_clientes() {
     document.getElementById("geral").style.display = "none";
     document.getElementById('endereco').style.display = "none";
@@ -54,7 +50,6 @@ document.getElementById('btn-total').addEventListener("click", () => {
 })
 
 
-
 function gerenciar_clientes() {
     document.getElementById('pesquisar-clientes').style.display = "none";
     document.getElementById('cadastrar-clientes').style.display = "none";
@@ -74,7 +69,6 @@ for (let btn of botoesEditar) {
         document.getElementById("editar-cliente").style.display = "block";
     });
 }
-
 
 
 let paginaAtual = 0;
@@ -155,8 +149,6 @@ document.getElementById("btn-total").addEventListener("click", () => {
     listar_clientes(); // já existente
     carregarClientes(0); // novo
 });
-
-
 
 
 document.querySelector("form").addEventListener("submit", function (event) {
