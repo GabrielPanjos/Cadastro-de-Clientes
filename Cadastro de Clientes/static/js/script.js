@@ -247,31 +247,41 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
 document.getElementById("btn-pesquisar").addEventListener("click", () => {
     const termo = document.getElementById("input-pesquisar").value.trim();
+    const erroPesquisar = document.getElementById("erro-pesquisar");
 
     if (!termo) {
-        alert("Digite um nome ou CPF para pesquisar.");
+        erroPesquisar.textContent = "Digite um nome ou CPF para pesquisar.";
+        erroPesquisar.style.display = "block";
+        document.getElementById("input-pesquisar").style.border = "1.5px solid #FF3D51";
         return;
     }
 
     fetch(`/clientes/buscar?termo=${encodeURIComponent(termo)}`)
         .then(res => res.json())
         .then(clientes => {
+            const inputPesquisar = document.getElementById("input-pesquisar");
             const tbody = document.getElementById("corpo-tabela");
             tbody.innerHTML = "";
 
             if (clientes.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='4'>Nenhum cliente encontrado.</td></tr>";
+                erroPesquisar.textContent = "Nenhum cliente encontrado com esse nome ou CPF.";
+                erroPesquisar.style.display = "block";
+                inputPesquisar.style.border = "1.5px solid #FF3D51";
                 return;
             }
+
+            // Limpa erro, pois clientes foram encontrados
+            erroPesquisar.style.display = "none";
+            inputPesquisar.style.border = "1px solid #323136";
 
             clientes.forEach(cliente => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-          <td>${cliente.id_clientes}</td>
-          <td>${cliente.nome}</td>
-          <td>${cliente.cpf}</td>
-          <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
-        `;
+                    <td>${cliente.id_clientes}</td>
+                    <td>${cliente.nome}</td>
+                    <td>${cliente.cpf}</td>
+                    <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
+                `;
                 tbody.appendChild(tr);
             });
 
@@ -289,3 +299,4 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
             alert("Erro ao buscar clientes.");
         });
 });
+

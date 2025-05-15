@@ -154,7 +154,7 @@ button {
     /* Alinha verticalmente os itens ao centro */
     margin: 30px;
     /* Margem para o contêiner */
-    margin-top: 80px;
+    margin-top: 60px;
     /* Adiciona espaço acima da div */
     margin-right: 100px;
 }
@@ -477,4 +477,9 @@ label.error {
 
 .coluna {
     padding-bottom: 40px;
+}
+
+#erro-pesquisar {
+    color: #FF3D51;
+    margin: 30px;
 }
