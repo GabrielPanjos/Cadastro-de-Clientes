@@ -81,7 +81,3 @@ Contribuições são bem-vindas! Se você tiver sugestões de melhorias ou corre
 ## Autor
 
 * \[Gabriel Pereira dos Anjos]
-
-## Licença
-
-\[Adicione a licença do projeto, se houver. Por exemplo, MIT License]
