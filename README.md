@@ -28,6 +28,7 @@ Este repositório contém o código de um sistema web para cadastro e gerenciame
 
 A estrutura do projeto é organizada da seguinte forma:
 
+```html
 ├── main.py           # Ponto de entrada da aplicação Flask
 ├── routes/           # Módulos Flask (rotas)
 │   ├── home.py       # Rotas da página inicial
@@ -41,7 +42,7 @@ A estrutura do projeto é organizada da seguinte forma:
 ├── db.py             # Conexão com o banco de dados
 ├── school_universe.sql # Script SQL para criação do banco de dados
 └── README.md         # Este arquivo
-
+```
 ## Configuração e Execução
 
 Para executar o projeto localmente, siga os passos:
