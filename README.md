@@ -78,10 +78,9 @@ Para executar o projeto localmente, siga os passos:
 
 Contribuições são bem-vindas! Se você tiver sugestões de melhorias ou correções, sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
-## Autores
+## Autor
 
-* \[Seu Nome]
-* \[Nome dos seus colegas, se houver]
+* \[Gabriel Pereira dos Anjos]
 
 ## Licença
 
