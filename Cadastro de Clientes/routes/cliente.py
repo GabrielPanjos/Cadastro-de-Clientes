@@ -202,3 +202,24 @@ def buscar_cliente(id_cliente):
         return jsonify(cliente)
     else:
         return jsonify({'erro': 'Cliente não encontrado'}), 404
+
+@cliente_route.route('/buscar', methods=['GET'])
+def buscar_clientes():
+    termo = request.args.get('termo', '').strip()
+
+    if not termo:
+        return jsonify([])
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Se for só números → busca por CPF
+    if termo.isdigit():
+        cursor.execute("SELECT * FROM clientes WHERE cpf LIKE %s", (f"%{termo}%",))
+    else:
+        cursor.execute("SELECT * FROM clientes WHERE nome LIKE %s", (f"%{termo}%",))
+
+    clientes = cursor.fetchall()
+    conn.close()
+
+    return jsonify(clientes)

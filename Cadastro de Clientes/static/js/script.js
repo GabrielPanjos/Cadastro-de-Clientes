@@ -39,11 +39,6 @@ function listar_clientes() {
 
 }
 
-document.getElementById('btn-pesquisar').addEventListener("click", () => {
-    listar_clientes();       // mostra a seção da tabela
-    carregarClientes(0);     // carrega os dados da API
-})
-
 document.getElementById('btn-total').addEventListener("click", () => {
     listar_clientes();       // mostra a seção da tabela
     carregarClientes(0);     // carrega os dados da API
@@ -91,6 +86,7 @@ function carregarClientes(pagina = 0) {
   <td>${cliente.cpf}</td>
   <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
 `;
+                tbody.appendChild(tr);
 
                 tr.querySelector(".btn-editar").addEventListener("click", (e) => {
                     const clienteId = e.target.dataset.id;
@@ -144,12 +140,6 @@ document.getElementById("btn-proximo").addEventListener("click", () => {
         carregarClientes(paginaAtual + 1);
     }
 });
-
-document.getElementById("btn-total").addEventListener("click", () => {
-    listar_clientes(); // já existente
-    carregarClientes(0); // novo
-});
-
 
 document.querySelector("form").addEventListener("submit", function (event) {
     const nomeInput = document.getElementById("nome");
@@ -253,4 +243,49 @@ document.querySelector("form").addEventListener("submit", function (event) {
     }
 
     // Se todas as validações passarem, o formulário é enviado
+});
+
+document.getElementById("btn-pesquisar").addEventListener("click", () => {
+    const termo = document.getElementById("input-pesquisar").value.trim();
+
+    if (!termo) {
+        alert("Digite um nome ou CPF para pesquisar.");
+        return;
+    }
+
+    fetch(`/clientes/buscar?termo=${encodeURIComponent(termo)}`)
+        .then(res => res.json())
+        .then(clientes => {
+            const tbody = document.getElementById("corpo-tabela");
+            tbody.innerHTML = "";
+
+            if (clientes.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='4'>Nenhum cliente encontrado.</td></tr>";
+                return;
+            }
+
+            clientes.forEach(cliente => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${cliente.id_clientes}</td>
+          <td>${cliente.nome}</td>
+          <td>${cliente.cpf}</td>
+          <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
+        `;
+                tbody.appendChild(tr);
+            });
+
+            // Exibe a seção da tabela e esconde o restante
+            document.getElementById("geral").style.display = "none";
+            document.getElementById('endereco').style.display = "none";
+            document.getElementById('h2-contatos').style.display = "none";
+            document.getElementById('h2-cadastrar').style.display = "none";
+            document.getElementById("btn-geral").style.display = "none";
+            document.getElementById("btn-endereco").style.display = "none";
+            document.getElementById("listar").style.display = "block";
+        })
+        .catch(err => {
+            console.error("Erro ao buscar clientes:", err);
+            alert("Erro ao buscar clientes.");
+        });
 });
