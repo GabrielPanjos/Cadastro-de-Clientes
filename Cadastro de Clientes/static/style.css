@@ -435,7 +435,7 @@ label.error {
     font-weight: 600;
 }
 
-#form-editar-cliente {
+.gerenciar-container-2 {
     display: flex;
     justify-content: space-between;
     gap: 40px;
