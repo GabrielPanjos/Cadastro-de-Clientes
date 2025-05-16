@@ -154,7 +154,7 @@ button {
     /* Alinha verticalmente os itens ao centro */
     margin: 30px;
     /* Margem para o contêiner */
-    margin-top: 80px;
+    margin-top: 60px;
     /* Adiciona espaço acima da div */
     margin-right: 100px;
 }
@@ -203,6 +203,7 @@ label {
     font-weight: 500;
     display: block;
     /* Faz a label ocupar toda a largura disponível */
+    color: #323136;
 }
 
 .btn-registrar {
@@ -376,6 +377,7 @@ tbody tr:nth-child(even) {
 
 #gerenciar-clientes {
     height: 778px;
+    margin-top: 50px;
 }
 
 .paginacao-clientes {
@@ -412,4 +414,72 @@ tbody tr:nth-child(even) {
 
 label.error {
     color: red;
+}
+
+.btn-salvar {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    border-radius: 10px;
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn-deletar {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    border-radius: 10px;
+    background-color: #FF3D51;
+    width: 110px;
+    height: 35px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.gerenciar-container-2 {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin: 40px;
+}
+
+.linha {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    margin-top: 50px;
+}
+
+.linha-botoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 100px;
+    margin: 40px;
+    padding-top: 20px;
+}
+
+#gerenciador-de-clientes {
+    background-color: #5634E0;
+    height: 60px;
+    width: 100%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    color: #fff;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+.coluna {
+    padding-bottom: 40px;
+}
+
+#erro-pesquisar {
+    color: #FF3D51;
+    margin: 30px;
 }

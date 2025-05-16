@@ -1,6 +1,3 @@
-
-
-
 function mostrarSecao(secaoId) {
     document.getElementById("geral").style.display = "none";
     document.getElementById('endereco').style.display = "none";
@@ -30,7 +27,6 @@ document.getElementById('btn-endereco').addEventListener("click", () => {
 })
 
 
-
 function listar_clientes() {
     document.getElementById("geral").style.display = "none";
     document.getElementById('endereco').style.display = "none";
@@ -43,16 +39,10 @@ function listar_clientes() {
 
 }
 
-document.getElementById('btn-pesquisar').addEventListener("click", () => {
-    listar_clientes();       // mostra a seção da tabela
-    carregarClientes(0);     // carrega os dados da API
-})
-
 document.getElementById('btn-total').addEventListener("click", () => {
     listar_clientes();       // mostra a seção da tabela
     carregarClientes(0);     // carrega os dados da API
 })
-
 
 
 function gerenciar_clientes() {
@@ -76,7 +66,6 @@ for (let btn of botoesEditar) {
 }
 
 
-
 let paginaAtual = 0;
 const clientesPorPagina = 5;
 let totalClientes = 0;
@@ -92,11 +81,50 @@ function carregarClientes(pagina = 0) {
             data.clientes.forEach(cliente => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-          <td>${cliente.id_clientes}</td>
-          <td>${cliente.nome}</td>
-          <td>${cliente.cpf}</td>
-          <td><div class="btn-press btn-editar">Editar</div></td>
-        `;
+  <td>${cliente.id_clientes}</td>
+  <td>${cliente.nome}</td>
+  <td>${cliente.cpf}</td>
+  <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
+`;
+                tbody.appendChild(tr);
+
+                tr.querySelector(".btn-editar").addEventListener("click", (e) => {
+                    const clienteId = e.target.dataset.id;
+                    gerenciar_clientes();
+
+                    fetch(`/clientes/buscar/${clienteId}`)
+                        .then(res => res.json())
+                        .then(cliente => {
+                            if (cliente.erro) {
+                                alert("Cliente não encontrado.");
+                                return;
+                            }
+
+                            // Preenche os campos
+                            document.getElementById("editar-id").value = cliente.id_clientes;
+                            document.getElementById("editar-nome").value = cliente.nome;
+                            document.getElementById("editar-cpf").value = cliente.cpf;
+                            document.getElementById("editar-rg").value = cliente.rg || "";
+                            if (cliente.data_nascimento) {
+                                const dataObj = new Date(cliente.data_nascimento);
+                                const ano = dataObj.getFullYear();
+                                const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+                                const dia = String(dataObj.getDate()).padStart(2, '0');
+                                document.getElementById("editar-data_nascimento").value = `${dia}/${mes}/${ano}`;
+                            } else {
+                                document.getElementById("editar-data_nascimento").value = "";
+                            }
+                            document.getElementById("editar-email").value = cliente.email || "";
+                            document.getElementById("editar-numero_telefone").value = cliente.numero_telefone || "";
+                            document.getElementById("editar-estado").value = cliente.estado || "";
+                            document.getElementById("editar-cidade").value = cliente.cidade || "";
+                            document.getElementById("editar-rua").value = cliente.rua || "";
+                            document.getElementById("editar-cep").value = cliente.cep || "";
+                            document.getElementById("editar-bairro").value = cliente.bairro || "";
+                            document.getElementById("editar-complemento").value = cliente.complemento || "";
+                        });
+                });
+
                 tbody.appendChild(tr);
             });
 
@@ -120,14 +148,6 @@ document.getElementById("btn-proximo").addEventListener("click", () => {
         carregarClientes(paginaAtual + 1);
     }
 });
-
-document.getElementById("btn-total").addEventListener("click", () => {
-    listar_clientes(); // já existente
-    carregarClientes(0); // novo
-});
-
-
-
 
 document.querySelector("form").addEventListener("submit", function (event) {
     const nomeInput = document.getElementById("nome");
@@ -231,4 +251,134 @@ document.querySelector("form").addEventListener("submit", function (event) {
     }
 
     // Se todas as validações passarem, o formulário é enviado
+});
+
+document.getElementById("btn-pesquisar").addEventListener("click", () => {
+    const termo = document.getElementById("input-pesquisar").value.trim();
+    const erroPesquisar = document.getElementById("erro-pesquisar");
+
+    if (!termo) {
+        erroPesquisar.textContent = "Digite um nome ou CPF para pesquisar.";
+        erroPesquisar.style.display = "block";
+        document.getElementById("input-pesquisar").style.border = "1.5px solid #FF3D51";
+        return;
+    }
+
+    fetch(`/clientes/buscar?termo=${encodeURIComponent(termo)}`)
+        .then(res => res.json())
+        .then(clientes => {
+            const inputPesquisar = document.getElementById("input-pesquisar");
+            const tbody = document.getElementById("corpo-tabela");
+            tbody.innerHTML = "";
+
+            if (clientes.length === 0) {
+                erroPesquisar.textContent = "Nenhum cliente encontrado com esse nome ou CPF.";
+                erroPesquisar.style.display = "block";
+                inputPesquisar.style.border = "1.5px solid #FF3D51";
+                return;
+            }
+
+            // Limpa erro, pois clientes foram encontrados
+            erroPesquisar.style.display = "none";
+            inputPesquisar.style.border = "1px solid #323136";
+
+            clientes.forEach(cliente => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${cliente.id_clientes}</td>
+                    <td>${cliente.nome}</td>
+                    <td>${cliente.cpf}</td>
+                    <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Exibe a seção da tabela e esconde o restante
+            document.getElementById("geral").style.display = "none";
+            document.getElementById('endereco').style.display = "none";
+            document.getElementById('h2-contatos').style.display = "none";
+            document.getElementById('h2-cadastrar').style.display = "none";
+            document.getElementById("btn-geral").style.display = "none";
+            document.getElementById("btn-endereco").style.display = "none";
+            document.getElementById("listar").style.display = "block";
+        })
+        .catch(err => {
+            console.error("Erro ao buscar clientes:", err);
+            alert("Erro ao buscar clientes.");
+        });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('form-cadastro');
+
+    if (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message);
+                    form.reset(); // limpa o formulário
+                } else {
+                    alert(result.error || 'Erro ao salvar cliente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+    }
+});
+
+document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const clienteId = document.getElementById('editar-id').value;
+    const formData = new FormData(e.target);
+
+    // Conversão da data de nascimento
+    let dataOriginal = document.getElementById('editar-data_nascimento').value;
+    let dataConvertida = "";
+
+    const partesData = dataOriginal.split('/');
+    if (partesData.length === 3) {
+        const dia = parseInt(partesData[0], 10);
+        const mes = parseInt(partesData[1], 10); // Mantenha o mês como está
+        const ano = parseInt(partesData[2], 10);
+
+        // Formatar a data para AAAA-MM-DD
+        dataConvertida = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        formData.set('data_nascimento', dataConvertida);
+    } else {
+        alert("Data de nascimento inválida. Use o formato dd/mm/aaaa.");
+        return;
+    }
+
+    // O restante do código para enviar o formData para o servidor
+    try {
+        const response = await fetch(`/clientes/${clienteId}/edit`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            alert(data.error || 'Erro ao atualizar cliente.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Erro de conexão com o servidor.');
+    }
 });

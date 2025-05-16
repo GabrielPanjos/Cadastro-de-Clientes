@@ -113,20 +113,169 @@ def form_cliente():
 
 @cliente_route.route('/<int:cliente_id>')
 def detalhe_cliente(cliente_id):
-    """ exibir detalhes do cliente """
-    return render_template('detalhe_cliente.html')
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM clientes WHERE id_clientes = %s", (cliente_id,))
+        cliente = cursor.fetchone()
+        conn.close()
+
+        if cliente:
+            print("Cliente encontrado:", cliente)  # Para depuração
+            return jsonify(cliente)
+        else:
+            print("Cliente não encontrado")  # Para depuração
+            return jsonify({'error': 'Cliente não encontrado'}), 404
+    except Exception as e:
+        print("Erro ao buscar cliente:", e)
+        traceback.print_exc()
+        return jsonify({'error': 'Erro ao buscar cliente'}), 500
 
 @cliente_route.route('/<int:cliente_id>/edit')
 def form_edit_cliente(cliente_id):
     """ formulário para editar um cliente """
     return render_template('form_edit_cliente.html')
 
-@cliente_route.route('/<int:cliente_id>/update', methods=['PUT'])
+@cliente_route.route('/<int:cliente_id>', methods=['PUT'])
 def atualizar_cliente(cliente_id):
-    """ atualizar informações do cliente """
-    pass
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Obter dados do formulário
+        nome = request.form.get('editar-nome', '').strip()
+        cpf = request.form.get('editar-cpf', '').strip()
+        rg = request.form.get('editar-rg', '').strip()
+        numero_telefone = request.form.get('editar-numero_telefone', '').strip()
+        email = request.form.get('editar-email', '').strip()
+        data_nascimento = request.form.get('editar-data_nascimento', '').strip()
+        estado = request.form.get('editar-estado', '').strip()
+        cidade = request.form.get('editar-cidade', '').strip()
+        rua = request.form.get('editar-rua', '').strip()
+        cep = request.form.get('editar-cep', '').strip()
+        bairro = request.form.get('editar-bairro', '').strip()
+        complemento = request.form.get('editar-complemento', '').strip()
+
+        # Validação (Opcional, mas recomendado)
+        if not nome or not cpf or not data_nascimento:
+            return jsonify({'error': 'Nome, CPF e Data de Nascimento são obrigatórios.'}), 400
+
+        # Executar a atualização
+        cursor.execute('''
+            UPDATE clientes
+            SET nome = %s, cpf = %s, rg = %s, numero_telefone = %s, email = %s,
+                data_nascimento = %s, estado = %s, cidade = %s, rua = %s,
+                cep = %s, bairro = %s, complemento = %s
+            WHERE id_clientes = %s
+        ''', (nome, cpf, rg, numero_telefone, email, data_nascimento, estado,
+              cidade, rua, cep, bairro, complemento, cliente_id))
+
+        conn.commit()
+
+        if cursor.rowcount > 0:
+            conn.close()
+            return jsonify({'message': 'Cliente atualizado com sucesso!'}), 200
+        else:
+            conn.close()
+            return jsonify({'message': 'Cliente não encontrado ou nenhuma alteração realizada.'}), 404
+
+    except Exception as e:
+        conn.close()
+        print('Erro ao atualizar cliente:', e)
+        traceback.print_exc()
+        return jsonify({'error': 'Erro ao atualizar cliente.'}), 500
 
 @cliente_route.route('/<int:cliente_id>/delete', methods=['DELETE'])
 def deletar_cliente(cliente_id):
     """ deletar informações do cliente """
     pass
+
+@cliente_route.route('/buscar/<int:id_cliente>', methods=['GET'])
+def buscar_cliente(id_cliente):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM clientes WHERE id_clientes = %s", (id_cliente,))
+    cliente = cursor.fetchone()
+    conn.close()
+
+    if cliente:
+        return jsonify(cliente)
+    else:
+        return jsonify({'erro': 'Cliente não encontrado'}), 404
+
+@cliente_route.route('/buscar', methods=['GET'])
+def buscar_clientes():
+    termo = request.args.get('termo', '').strip()
+
+    if not termo:
+        return jsonify([])
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Se for só números → busca por CPF
+    if termo.isdigit():
+        cursor.execute("SELECT * FROM clientes WHERE cpf LIKE %s", (f"%{termo}%",))
+    else:
+        cursor.execute("SELECT * FROM clientes WHERE nome LIKE %s", (f"%{termo}%",))
+
+    clientes = cursor.fetchall()
+    conn.close()
+
+    return jsonify(clientes)
+
+@cliente_route.route('/<int:cliente_id>/edit', methods=['POST'])
+def atualizar_cliente_post(cliente_id):
+       try:
+           conn = get_db_connection()
+           cursor = conn.cursor()
+
+           # Obter dados do formulário
+           nome = request.form.get('nome', '').strip()
+           cpf = request.form.get('CPF', '').strip()
+           rg = request.form.get('RG', '').strip()
+           numero_telefone = request.form.get('numero_telefone', '').strip()
+           email = request.form.get('email', '').strip()
+           data_nascimento = request.form.get('data_nascimento', '').strip()
+           estado = request.form.get('estado', '').strip()
+           cidade = request.form.get('cidade', '').strip()
+           rua = request.form.get('rua', '').strip()
+           cep = request.form.get('CEP', '').strip()
+           bairro = request.form.get('bairro', '').strip()
+           complemento = request.form.get('complemento', '').strip()
+
+           # Log dos dados recebidos
+           print(f"Dados recebidos para atualização: {request.form}")
+
+           # Validação (Opcional, mas recomendado)
+           if not nome or not cpf or not data_nascimento:
+               return jsonify({'error': 'Nome, CPF e Data de Nascimento são obrigatórios.'}), 400
+
+           # Executar a atualização
+           cursor.execute('''
+               UPDATE clientes
+               SET nome = %s, cpf = %s, rg = %s, numero_telefone = %s, email = %s,
+                   data_nascimento = %s, estado = %s, cidade = %s, rua = %s,
+                   cep = %s, bairro = %s, complemento = %s
+               WHERE id_clientes = %s
+           ''', (nome, cpf, rg, numero_telefone, email, data_nascimento, estado,
+                 cidade, rua, cep, bairro, complemento, cliente_id))
+
+           conn.commit()
+
+           if cursor.rowcount > 0:
+               conn.close()
+               return jsonify({'message': 'Cliente atualizado com sucesso!'}), 200
+           else:
+               conn.close()
+               return jsonify({'message': 'Cliente não encontrado ou nenhuma alteração realizada.'}), 404
+
+       except Exception as e:
+           conn.close()
+           print('Erro ao atualizar cliente:', e)  # Log do erro
+           traceback.print_exc()  # Imprime o traceback completo
+           return jsonify({'error': 'Erro ao atualizar cliente.'}), 500
+   
+   
+
+
