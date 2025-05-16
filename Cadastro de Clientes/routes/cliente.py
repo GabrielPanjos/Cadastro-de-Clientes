@@ -3,6 +3,7 @@ from db import get_db_connection
 import re
 import traceback  # Importe traceback
 from datetime import datetime
+import pytz
 
 cliente_route = Blueprint('cliente', __name__)
 
@@ -223,3 +224,59 @@ def buscar_clientes():
     conn.close()
 
     return jsonify(clientes)
+
+@cliente_route.route('/<int:cliente_id>/edit', methods=['POST'])
+def atualizar_cliente_post(cliente_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Obter dados do formulário
+        nome = request.form.get('nome', '').strip()
+        cpf = request.form.get('CPF', '').strip()
+        rg = request.form.get('RG', '').strip()
+        numero_telefone = request.form.get('numero_telefone', '').strip()
+        email = request.form.get('email', '').strip()
+        data_nascimento = request.form.get('data_nascimento', '').strip()
+        estado = request.form.get('estado', '').strip()
+        cidade = request.form.get('cidade', '').strip()
+        rua = request.form.get('rua', '').strip()
+        cep = request.form.get('CEP', '').strip()
+        bairro = request.form.get('bairro', '').strip()
+        complemento = request.form.get('complemento', '').strip()
+
+        # Verificar se a data de nascimento está no formato correto
+        if data_nascimento:
+            # A data deve estar no formato AAAA-MM-DD
+            # Se a data estiver no formato DD/MM/AAAA, converta-a
+            partes_data = data_nascimento.split('/')
+            if len(partes_data) == 3:
+                dia = partes_data[0]
+                mes = partes_data[1]
+                ano = partes_data[2]
+                data_nascimento = f"{ano}-{mes}-{dia}"  # Formato AAAA-MM-DD
+
+        # Executar a atualização
+        cursor.execute('''
+            UPDATE clientes
+            SET nome = %s, cpf = %s, rg = %s, numero_telefone = %s, email = %s,
+                data_nascimento = %s, estado = %s, cidade = %s, rua = %s,
+                cep = %s, bairro = %s, complemento = %s
+            WHERE id_clientes = %s
+        ''', (nome, cpf, rg, numero_telefone, email, data_nascimento, estado,
+              cidade, rua, cep, bairro, complemento, cliente_id))
+
+        conn.commit()
+
+        if cursor.rowcount > 0:
+            conn.close()
+            return jsonify({'message': 'Cliente atualizado com sucesso!'}), 200
+        else:
+            conn.close()
+            return jsonify({'message': 'Cliente não encontrado ou nenhuma alteração realizada.'}), 404
+
+    except Exception as e:
+        conn.close()
+        print('Erro ao atualizar cliente:', e)
+        traceback.print_exc()
+        return jsonify({'error': 'Erro ao atualizar cliente.'}), 500

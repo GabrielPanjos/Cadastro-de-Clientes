@@ -47,9 +47,10 @@
               <div id="contagem-clientes">{{ clientes|length }} Clientes</div>
             </div>
           </div>
-          <div id="erro-pesquisar" style="display: none">
-            digite um nome ou CPF para pesquisar.
-          </div>
+          <span
+            id="erro-pesquisar"
+            class="error-message"
+          ></span>
         </section>
 
         <div class="tabs">
@@ -86,7 +87,7 @@
             <h2 id="h2-contatos">CONTATOS</h2>
           </div>
 
-          <form action="{{ url_for('cliente.obter_cliente') }}" method="POST">
+          <form id="form-cadastro" action="{{ url_for('cliente.obter_cliente') }}" method="POST">
             <div class="cadastrar-clientes-container" id="geral">
               <div class="cadastrar-container">
                 <div class="form-container">
@@ -106,11 +107,15 @@
                       <input
                         type="text"
                         name="CPF"
-                        placeholder="Digite o CPF ou CNPJ"
+                        placeholder="Digite o CPF"
                         class="input-form"
+                        id="input-cpf"
                         required
                       />
-                      <span id="cpf-error" class="error-message"></span>
+                      <span
+                        id="cpf-error"
+                        class="error-message"
+                      ></span>
                     </div>
                     <div>
                       <label>RG</label>
@@ -128,9 +133,13 @@
                         name="data_nascimento"
                         id="data_nascimento"
                         placeholder="dd/mm/aaaa"
-                        class="input-form"
+                        class="input-form input-data-nascimento"
                         required
                       />
+                      <span
+                        id="data-nascimento-error"
+                        class="error-message"
+                      ></span>
                     </div>
                   </div>
                 </div>
@@ -283,6 +292,7 @@
                       <input
                         type="text"
                         id="editar-nome"
+                        name="nome"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -292,6 +302,7 @@
                       <input
                         type="text"
                         id="editar-cpf"
+                        name="CPF"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -301,6 +312,7 @@
                       <input
                         type="text"
                         id="editar-estado"
+                        name="estado"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -310,6 +322,7 @@
                       <input
                         type="text"
                         id="editar-cep"
+                        name="CEP"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -321,6 +334,7 @@
                       <input
                         type="text"
                         id="editar-numero_telefone"
+                        name="numero_telefone"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -330,6 +344,7 @@
                       <input
                         type="text"
                         id="editar-rg"
+                        name="RG"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -339,6 +354,7 @@
                       <input
                         type="text"
                         id="editar-cidade"
+                        name="cidade"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -348,6 +364,7 @@
                       <input
                         type="text"
                         id="editar-bairro"
+                        name="bairro"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -359,6 +376,7 @@
                       <input
                         type="email"
                         id="editar-email"
+                        name="email"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -368,6 +386,7 @@
                       <input
                         type="text"
                         id="editar-data_nascimento"
+                        name="data_nascimento"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -377,6 +396,7 @@
                       <input
                         type="text"
                         id="editar-rua"
+                        name="rua"
                         placeholder="Sem dados..."
                         class="input-form"
                       />
@@ -386,6 +406,7 @@
                       <input
                         type="text"
                         id="editar-complemento"
+                        name="complemento"
                         placeholder="Sem dados..."
                         class="input-form"
                       />

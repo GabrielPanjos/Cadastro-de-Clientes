@@ -403,6 +403,7 @@ tbody tr:nth-child(even) {
 }
 
 .error-message {
+    display: none;
     color: red;
     font-size: 0.8em;
     /* Tamanho menor para a mensagem */
@@ -410,6 +411,10 @@ tbody tr:nth-child(even) {
     /* Garante que a mensagem vá para a próxima linha */
     margin-top: 5px;
     /* Espaço entre o input e a mensagem */
+}
+
+.error-message.visible {
+  display: inline;       /* Só mostra quando tiver erro */
 }
 
 label.error {

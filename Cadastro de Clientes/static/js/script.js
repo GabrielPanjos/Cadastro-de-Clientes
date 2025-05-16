@@ -87,6 +87,7 @@ function carregarClientes(pagina = 0) {
   <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
 `;
                 tbody.appendChild(tr);
+                configurarBotoesEditar();
 
                 tr.querySelector(".btn-editar").addEventListener("click", (e) => {
                     const clienteId = e.target.dataset.id;
@@ -105,7 +106,15 @@ function carregarClientes(pagina = 0) {
                             document.getElementById("editar-nome").value = cliente.nome;
                             document.getElementById("editar-cpf").value = cliente.cpf;
                             document.getElementById("editar-rg").value = cliente.rg || "";
-                            document.getElementById("editar-data_nascimento").value = cliente.data_nascimento || "";
+                            if (cliente.data_nascimento) {
+                                const dataObj = new Date(cliente.data_nascimento);
+                                const ano = dataObj.getFullYear();
+                                const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+                                const dia = String(dataObj.getDate()).padStart(2, '0');
+                                document.getElementById("editar-data_nascimento").value = `${dia}/${mes}/${ano}`;
+                            } else {
+                                document.getElementById("editar-data_nascimento").value = "";
+                            }
                             document.getElementById("editar-email").value = cliente.email || "";
                             document.getElementById("editar-numero_telefone").value = cliente.numero_telefone || "";
                             document.getElementById("editar-estado").value = cliente.estado || "";
@@ -171,10 +180,18 @@ document.querySelector("form").addEventListener("submit", function (event) {
         return;
     }
     if (!/^\d{11}$/.test(cpf)) {
-        alert("CPF deve ter 11 dígitos numéricos.");
-        cpfInput.focus();
+        const erroCPF = document.getElementById("cpf-error"); // certo agora
+        erroCPF.textContent = "CPF deve ter 11 dígitos numéricos.";
+        erroCPF.classList.add("visible");
+        cpfInput.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
         return;
+    } else {
+        // limpa erro caso esteja válido
+        const erroCPF = document.getElementById("cpf-error");
+        erroCPF.textContent = "";
+        erroCPF.classList.remove("visible");
+        cpfInput.style.border = ""; // volta ao padrão
     }
 
     // Validação da Data de Nascimento
@@ -189,10 +206,18 @@ document.querySelector("form").addEventListener("submit", function (event) {
     data_nascimento = data_nascimento.replace(/\D/g, "");
 
     if (data_nascimento.length !== 8) {
-        alert("Data inválida. Use o formato dd/mm/aaaa ou ddmmaaaa.");
-        inputData.focus();
+        const erroData = document.getElementById("data-nascimento-error");
+        erroData.textContent = "Data inválida. Use o formato dd/mm/aaaa.";
+        erroData.classList.add("visible");
+        data_nascimento.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
         return;
+    } else {
+        // limpa erro caso esteja válido
+        const erroData = document.getElementById("data-nascimento-error");
+        erroData.textContent = "";
+        erroData.classList.remove("visible");
+        cpfInput.style.border = ""; // volta ao padrão
     }
 
     const dia = parseInt(data_nascimento.substring(0, 2));
@@ -251,7 +276,7 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
 
     if (!termo) {
         erroPesquisar.textContent = "Digite um nome ou CPF para pesquisar.";
-        erroPesquisar.style.display = "block";
+        erroPesquisar.classList.add("visible");
         document.getElementById("input-pesquisar").style.border = "1.5px solid #FF3D51";
         return;
     }
@@ -265,25 +290,68 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
 
             if (clientes.length === 0) {
                 erroPesquisar.textContent = "Nenhum cliente encontrado com esse nome ou CPF.";
-                erroPesquisar.style.display = "block";
+                erroPesquisar.classList.add("visible");
                 inputPesquisar.style.border = "1.5px solid #FF3D51";
                 return;
             }
 
             // Limpa erro, pois clientes foram encontrados
-            erroPesquisar.style.display = "none";
+            erroPesquisar.textContent = "";
+            erroPesquisar.classList.remove("visible");
             inputPesquisar.style.border = "1px solid #323136";
 
             clientes.forEach(cliente => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td>${cliente.id_clientes}</td>
-                    <td>${cliente.nome}</td>
-                    <td>${cliente.cpf}</td>
-                    <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
-                `;
+        <td>${cliente.id_clientes}</td>
+        <td>${cliente.nome}</td>
+        <td>${cliente.cpf}</td>
+        <td><div class="btn-press btn-editar" data-id="${cliente.id_clientes}">Editar</div></td>
+    `;
                 tbody.appendChild(tr);
             });
+
+            // ⬇️ AQUI entra o tratamento do botão editar
+            const botoesEditar = document.getElementsByClassName('btn-editar');
+            for (let btn of botoesEditar) {
+                btn.addEventListener("click", (e) => {
+                    const clienteId = e.target.dataset.id;
+                    gerenciar_clientes();
+
+                    fetch(`/clientes/buscar/${clienteId}`)
+                        .then(res => res.json())
+                        .then(cliente => {
+                            if (cliente.erro) {
+                                alert("Cliente não encontrado.");
+                                return;
+                            }
+
+                            document.getElementById("editar-id").value = cliente.id_clientes;
+                            document.getElementById("editar-nome").value = cliente.nome;
+                            document.getElementById("editar-cpf").value = cliente.cpf;
+                            document.getElementById("editar-rg").value = cliente.rg || "";
+
+                            if (cliente.data_nascimento) {
+                                const dataObj = new Date(cliente.data_nascimento);
+                                const ano = dataObj.getFullYear();
+                                const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+                                const dia = String(dataObj.getDate()).padStart(2, '0');
+                                document.getElementById("editar-data_nascimento").value = `${dia}/${mes}/${ano}`;
+                            } else {
+                                document.getElementById("editar-data_nascimento").value = "";
+                            }
+
+                            document.getElementById("editar-email").value = cliente.email || "";
+                            document.getElementById("editar-numero_telefone").value = cliente.numero_telefone || "";
+                            document.getElementById("editar-estado").value = cliente.estado || "";
+                            document.getElementById("editar-cidade").value = cliente.cidade || "";
+                            document.getElementById("editar-rua").value = cliente.rua || "";
+                            document.getElementById("editar-cep").value = cliente.cep || "";
+                            document.getElementById("editar-bairro").value = cliente.bairro || "";
+                            document.getElementById("editar-complemento").value = cliente.complemento || "";
+                        });
+                });
+            }
 
             // Exibe a seção da tabela e esconde o restante
             document.getElementById("geral").style.display = "none";
@@ -300,3 +368,120 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
         });
 });
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('form-cadastro');
+
+    if (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message);
+                    form.reset(); // limpa o formulário
+                } else {
+                    alert(result.error || 'Erro ao salvar cliente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+    }
+});
+
+document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const clienteId = document.getElementById('editar-id').value;
+    const formData = new FormData(e.target);
+
+    // Conversão da data de nascimento
+    let dataOriginal = document.getElementById('editar-data_nascimento').value;
+    let dataConvertida = "";
+
+    const partesData = dataOriginal.split('/');
+    if (partesData.length === 3) {
+        const dia = parseInt(partesData[0], 10);
+        const mes = parseInt(partesData[1], 10); // Mantenha o mês como está
+        const ano = parseInt(partesData[2], 10);
+
+        // Formatar a data para AAAA-MM-DD sem conversão para UTC
+        dataConvertida = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        formData.set('data_nascimento', dataConvertida);
+    } else {
+        alert("Data de nascimento inválida. Use o formato dd/mm/aaaa.");
+        return;
+    }
+
+    // O restante do código para enviar o formData para o servidor
+    try {
+        const response = await fetch(`/clientes/${clienteId}/edit`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            alert(data.error || 'Erro ao atualizar cliente.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Erro de conexão com o servidor.');
+    }
+});
+
+function configurarBotoesEditar() {
+    const botoesEditar = document.getElementsByClassName('btn-editar');
+    for (let btn of botoesEditar) {
+        btn.addEventListener("click", (e) => {
+            const clienteId = e.target.dataset.id;
+            gerenciar_clientes();
+
+            fetch(`/clientes/buscar/${clienteId}`)
+                .then(res => res.json())
+                .then(cliente => {
+                    if (cliente.erro) {
+                        alert("Cliente não encontrado.");
+                        return;
+                    }
+
+                    document.getElementById("editar-id").value = cliente.id_clientes;
+                    document.getElementById("editar-nome").value = cliente.nome;
+                    document.getElementById("editar-cpf").value = cliente.cpf;
+                    document.getElementById("editar-rg").value = cliente.rg || "";
+
+                    if (cliente.data_nascimento) {
+                        const dataObj = new Date(cliente.data_nascimento);
+                        const ano = dataObj.getFullYear();
+                        const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+                        const dia = String(dataObj.getDate()).padStart(2, '0');
+                        document.getElementById("editar-data_nascimento").value = `${dia}/${mes}/${ano}`;
+                    } else {
+                        document.getElementById("editar-data_nascimento").value = "";
+                    }
+
+                    document.getElementById("editar-email").value = cliente.email || "";
+                    document.getElementById("editar-numero_telefone").value = cliente.numero_telefone || "";
+                    document.getElementById("editar-estado").value = cliente.estado || "";
+                    document.getElementById("editar-cidade").value = cliente.cidade || "";
+                    document.getElementById("editar-rua").value = cliente.rua || "";
+                    document.getElementById("editar-cep").value = cliente.cep || "";
+                    document.getElementById("editar-bairro").value = cliente.bairro || "";
+                    document.getElementById("editar-complemento").value = cliente.complemento || "";
+                });
+        });
+    }
+}
