@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('/', {
+                const response = await fetch('/clientes/', {
                     method: 'POST',
                     body: formData
                 });
