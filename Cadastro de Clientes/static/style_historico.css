@@ -1,0 +1,132 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+header {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 2;
+    /* Z-index do header */
+    background-color: #5634E0;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
+
+main {
+    position: relative;
+    /* Necessário para aplicar z-index */
+    z-index: 1;
+    /* Z-index do main */
+    display: flex;
+    /* Define o main como um contêiner flexível */
+    background-color: #D9D9D9;
+    height: calc(100% - 60px);
+    width: 100%;
+}
+
+aside {
+    background-color: #fff;
+    width: 410px;
+    /* Largura fixa para o aside */
+    height: 865px;
+    margin-top: 46px;
+    border-top-right-radius: 5px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+}
+
+#conteudo {
+    display: flex;
+    /* Define o contêiner das seções como flexível */
+    flex-direction: column;
+    /* Coloca as seções em coluna */
+    flex: 1;
+    /* Permite que o contêiner ocupe o espaço restante */
+    margin: 20px;
+    /* Margem para o contêiner das seções */
+}
+
+#selecionar-clientes {
+    background-color: #fff;
+    height: 60px;
+    border-top-right-radius: 5px;
+    color: #5634E0;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+a {
+    text-decoration: none;
+}
+
+#selecionar-historico {
+    background-color: #5634E0;
+    height: 60px;
+    color: #fff;
+    display: flex;
+    /* Usar flexbox para centralizar o conteúdo */
+    align-items: center;
+    /* Centraliza verticalmente */
+    padding-left: 20px;
+    /* Adiciona um espaço à esquerda */
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+section {
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    background-color: #fff;
+    margin: 25px;
+    border-radius: 5px;
+}
+
+#historico-clientes {
+    height: 1000px;
+}
+
+input {
+    padding-left: 10px;
+    width: 160px;
+    height: 40px;
+    border: 1px solid #323136;
+    border-radius: 5px 5px 5px 5px;
+    color: #323136;
+    font-weight: 500;
+    /* Define o peso da fonte como semibold */
+}
+
+input::placeholder {
+    color: #323136;
+}
+
+button {
+    border: none;
+    background-color: #5634E0;
+    color: #fff;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.250);
+    font-weight: 600;
+    /* Define o peso da fonte como semibold */
+}
+
+.btn-medio {
+    width: 160px;
+    height: 40px;
+}
+
+.btn-press {
+    cursor: pointer;
+}

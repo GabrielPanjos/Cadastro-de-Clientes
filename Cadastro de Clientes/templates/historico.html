@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Universe</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style_historico.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/logosemfundo.png') }}"
+    />
+  </head>
+  <body>
+    <header></header>
+
+    <main>
+      <aside>
+        <a href="{{ url_for('cliente.lista_clientes') }}">
+          <div id="selecionar-clientes">Clientes</div>
+        </a>
+        <a href="{{ url_for('cliente.historico') }}">
+          <div id="selecionar-historico">Histórico</div>
+        </a>
+      </aside>
+
+      <div id="conteudo">
+        <section id="historico-clientes">
+          <div class="historico-clientes-container">
+            <div class="historico-container">
+              
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
