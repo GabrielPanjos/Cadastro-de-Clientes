@@ -70,7 +70,7 @@ aside {
 }
 
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 #selecionar-historico {
@@ -432,7 +432,8 @@ tbody tr:nth-child(even) {
 }
 
 .error-message.visible {
-  display: inline;       /* Só mostra quando tiver erro */
+    display: inline;
+    /* Só mostra quando tiver erro */
 }
 
 label.error {
@@ -505,4 +506,26 @@ label.error {
 #erro-pesquisar {
     color: #FF3D51;
     margin: 30px;
+}
+
+.alerta-topo {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.alerta-topo.mostrar {
+    opacity: 1;
+    pointer-events: auto;
 }

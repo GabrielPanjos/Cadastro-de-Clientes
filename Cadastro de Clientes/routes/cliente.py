@@ -20,36 +20,6 @@ def obter_cliente():
         numero_telefone = request.form.get('numero_telefone', '').strip()
         cep = request.form.get('CEP', '').strip()
 
-        # Validação do Nome
-        if not nome:
-            return jsonify({"error": "Erro: Nome não pode estar vazio."}), 400
-
-        # Validação do CPF
-        if not cpf:
-            return jsonify({"error": "Erro: CPF não pode estar vazio."}), 400
-        if not re.match(r'^\d{11}$', cpf):
-            return jsonify({"error": "Erro: CPF deve ter 11 dígitos numéricos."}), 400
-
-        # Validação da Data de Nascimento
-        if not data_nascimento:
-            return jsonify({"error": "Erro: Data de Nascimento não pode estar vazia."}), 400
-        try:
-            datetime.strptime(data_nascimento, '%Y-%m-%d')
-        except ValueError:
-            return jsonify({"error": "Erro: Data de Nascimento em formato inválido (AAAA-MM-DD)."}), 400
-
-        # Validação do Email
-        if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-            return jsonify({"error": "Erro: Formato de E-mail inválido."}), 400
-
-        # Validação do Celular
-        if numero_telefone and not re.match(r'^\d{10,11}$', numero_telefone):
-            return jsonify({"error": "Erro: Celular deve ter 10 ou 11 dígitos numéricos."}), 400
-
-        # Validação do CEP
-        if cep and not re.match(r'^\d{8}$', cep):
-            return jsonify({"error": "Erro: CEP deve ter 8 dígitos numéricos."}), 400
-
         # Se todas as validações passarem, continua com o cadastro
         rg = request.form['RG']
         estado = request.form['estado']

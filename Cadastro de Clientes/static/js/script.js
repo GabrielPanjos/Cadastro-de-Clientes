@@ -122,7 +122,12 @@ function carregarClientes(pagina = 0) {
                         .then(res => res.json())
                         .then(cliente => {
                             if (cliente.erro) {
-                                alert("Cliente não encontrado.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Cliente não encontrado',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
                                 return;
                             }
 
@@ -191,7 +196,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação do Nome (como antes)
     if (nome === "") {
-        alert("O campo Nome é obrigatório.");
+        Swal.fire({
+            icon: 'error',
+            title: 'O campo Nome é obrigatório',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         nomeInput.focus();
         event.preventDefault();
         return;
@@ -199,14 +210,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação do CPF (como antes)
     if (cpf === "") {
-        alert("O campo CPF é obrigatório.");
         cpfInput.focus();
         event.preventDefault();
         return;
     }
     if (!/^\d{11}$/.test(cpf)) {
         const erroCPF = document.getElementById("cpf-error"); // certo agora
-        erroCPF.textContent = "CPF deve ter 11 dígitos numéricos.";
+        erroCPF.textContent = "CPF não encontrado.";
         erroCPF.classList.add("visible");
         cpfInput.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
@@ -221,7 +231,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação da Data de Nascimento
     if (data_nascimento === "") {
-        alert("O campo Data de Nascimento é obrigatório.");
+        Swal.fire({
+            icon: 'error',
+            title: 'O campo Data de Nascimento é obrigatório',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         inputData.focus();
         event.preventDefault();
         return;
@@ -256,7 +272,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
         data.getMonth() !== mes - 1 ||
         data.getDate() !== dia
     ) {
-        alert("Data inválida.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Data inválida',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         inputData.focus();
         event.preventDefault();
         return;
@@ -270,7 +292,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação do Email (como antes)
     if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-        alert("Formato de E-mail inválido.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Formato de Email inválido',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         emailInput.focus();
         event.preventDefault();
         return;
@@ -278,7 +306,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação do Celular (como antes)
     if (celular && !/^\d{10,11}$/.test(celular)) {
-        alert("Celular deve ter 10 ou 11 dígitos numéricos.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Celular deve ter 10 ou 11 digitos numéricos',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         celularInput.focus();
         event.preventDefault();
         return;
@@ -286,7 +320,13 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Validação do CEP (como antes)
     if (cep && !/^\d{8}$/.test(cep)) {
-        alert("CEP deve ter 8 dígitos numéricos.");
+        Swal.fire({
+            icon: 'error',
+            title: 'CEP não encontrado',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         cepInput.focus();
         event.preventDefault();
         return;
@@ -347,7 +387,13 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
                         .then(res => res.json())
                         .then(cliente => {
                             if (cliente.erro) {
-                                alert("Cliente não encontrado.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Cliente não encontrado',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+
                                 return;
                             }
 
@@ -389,7 +435,13 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
         })
         .catch(err => {
             console.error("Erro ao buscar clientes:", err);
-            alert("Erro ao buscar clientes.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao buscar cliente',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
         });
 });
 
@@ -415,11 +467,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert(result.message);
                     form.reset(); // limpa o formulário
                 } else {
-                    alert(result.error || 'Erro ao salvar cliente.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao salvar cliente',
+                        text: 'Algumas informações não estão totalmente válidas',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert('Erro de conexão com o servidor.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de conexão com o servidor',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
             }
         });
     }
@@ -444,7 +509,13 @@ document.getElementById('form-editar-cliente').addEventListener('submit', async 
         dataConvertida = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
         formData.set('data_nascimento', dataConvertida);
     } else {
-        alert("Data de nascimento inválida. Use o formato dd/mm/aaaa.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Data de nascimento inválida. Use o formato dd/mm/aaaa',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         return;
     }
 
@@ -460,11 +531,23 @@ document.getElementById('form-editar-cliente').addEventListener('submit', async 
         if (response.ok) {
             alert(data.message);
         } else {
-            alert(data.error || 'Erro ao atualizar cliente.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao atualizar cliente',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
         }
     } catch (err) {
         console.error(err);
-        alert('Erro de conexão com o servidor.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro de conexão com o servidor',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
     }
 });
 
@@ -479,7 +562,13 @@ function configurarBotoesEditar() {
                 .then(res => res.json())
                 .then(cliente => {
                     if (cliente.erro) {
-                        alert("Cliente não encontrado.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cliente não encontrado',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+
                         return;
                     }
 
@@ -518,7 +607,13 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
     const clienteId = document.getElementById("editar-id").value;
 
     if (!clienteId) {
-        alert("Nenhum cliente selecionado.");
+        Swal.fire({
+            icon: 'error',
+            title: 'nenhum cliente selecionado',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         return;
     }
 
@@ -538,10 +633,22 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
             listar_clientes();     // mostra a lista
             carregarClientes(0);   // recarrega a tabela
         } else {
-            alert(data.error || "Erro ao deletar cliente.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao detectar cliente',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
         }
     } catch (err) {
         console.error("Erro ao deletar cliente:", err);
-        alert("Erro de conexão com o servidor.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro de conexão ao servidor',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
     }
 });

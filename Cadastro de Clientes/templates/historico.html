@@ -15,6 +15,8 @@
     />
   </head>
   <body>
+    <div id="alerta" class="alerta-topo"></div>
+
     <header></header>
 
     <main>
@@ -27,11 +29,13 @@
         </a>
       </aside>
 
-      <section id="historico-clientes">
-        <div class="historico-clientes-container">
-          
-        </div>
-      </section>
+      <div id="conteudo">
+        <section id="historico-clientes">
+          <div class="historico-clientes-container">
+            <div class="historico-container"></div>
+          </div>
+        </section>
+      </div>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
