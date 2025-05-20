@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Universe</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/logosemfundo.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+  </head>
+  <body>
+    <header></header>
+
+    <main>
+      <aside>
+        <a href="{{ url_for('cliente.lista_clientes') }}">
+          <div id="selecionar-clientes">Clientes</div>
+        </a>
+        <a href="{{ url_for('cliente.historico') }}" style="display: none;">
+          <div id="selecionar-historico">Histórico</div>
+        </a>
+      </aside>
+
+      <div id="conteudo">
+        <section id="pesquisar-clientes">
+          <h2 id="h2-clientes">CLIENTES</h2>
+
+          <div id="linha-horizontal"></div>
+
+          <div class="pesquisar-clientes-container">
+            <div class="pesquisar-container">
+              <input
+                type="text"
+                id="input-pesquisar"
+                name="termo_busca"
+                placeholder="Pesquisar clientes..."
+              />
+              <button class="btn-medio btn-press" id="btn-pesquisar">
+                Pesquisar
+              </button>
+            </div>
+            <div class="total-container">
+              <button class="btn-medio btn-press" id="btn-total">Total</button>
+              <div id="contagem-clientes">{{ clientes|length }} Clientes</div>
+            </div>
+          </div>
+          <span id="erro-pesquisar" class="error-message"></span>
+        </section>
+
+        <div class="tabs">
+          <button
+            class="tab-button btn-press"
+            id="btn-geral"
+            style="
+              background-color: #ffffff;
+              color: #5634e0;
+              position: relative;
+              z-index: 1;
+              box-shadow: 0px 0px 0px 0px;
+            "
+          >
+            Geral
+          </button>
+          <button
+            class="tab-button btn-press"
+            id="btn-endereco"
+            style="
+              background-color: #5634e0;
+              box-shadow: 0px 0px 0px 0px;
+              position: relative;
+              z-index: 1;
+            "
+          >
+            Endereço
+          </button>
+        </div>
+
+        <section id="cadastrar-clientes" class="secao">
+          <div class="dois-h2">
+            <h2 id="h2-cadastrar">CADASTRAR</h2>
+            <h2 id="h2-contatos">CONTATOS</h2>
+          </div>
+
+          <form id="form-cadastro">
+            <div class="cadastrar-clientes-container" id="geral">
+              <div class="cadastrar-container">
+                <div class="form-container">
+                  <div class="div-cima">
+                    <label>Nome*</label>
+                    <input
+                      type="text"
+                      name="nome"
+                      placeholder="Digite o Nome"
+                      id="nome"
+                      required
+                    />
+                  </div>
+                  <div class="div-baixo">
+                    <div>
+                      <label id="label-cpf">CPF*</label>
+                      <input
+                        type="text"
+                        name="CPF"
+                        placeholder="Digite o CPF"
+                        class="input-form"
+                        id="input-cpf"
+                        required
+                      />
+                      <span id="cpf-error" class="error-message"></span>
+                    </div>
+                    <div>
+                      <label>RG</label>
+                      <input
+                        type="text"
+                        name="RG"
+                        placeholder="Digite o RG"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Data de Nascimento*</label>
+                      <input
+                        type="text"
+                        name="data_nascimento"
+                        id="data_nascimento"
+                        placeholder="dd/mm/aaaa"
+                        class="input-form input-data-nascimento"
+                        required
+                      />
+                      <span
+                        id="data-nascimento-error"
+                        class="error-message"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="div-button">
+                  <button type="submit" class="btn-registrar btn-press">
+                    Registrar
+                  </button>
+                </div>
+              </div>
+              <div id="linha-vertial"></div>
+              <div class="contatos-container">
+                <div class="div-contatos-container">
+                  <div class="form-container">
+                    <div class="div-cima">
+                      <div>
+                        <label>Celular</label>
+                        <input
+                          type="text"
+                          name="numero_telefone"
+                          placeholder="Digite o número do Celular"
+                          class="input-form"
+                        />
+                      </div>
+                      <div>
+                        <label>Email</label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="Digite o Email"
+                          class="input-form"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="cadastrar-clientes-container-2"
+              id="endereco"
+              style="display: none"
+            >
+              <div class="cadastrar-container-2">
+                <div class="form-container-2">
+                  <div class="div-cima-2">
+                    <div>
+                      <label>Estado</label>
+                      <input
+                        type="text"
+                        name="estado"
+                        placeholder="Digite o Estado"
+                        id="estado"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Cidade</label>
+                      <input
+                        type="text"
+                        name="cidade"
+                        placeholder="Digite a Cidade"
+                        id="cidade"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Rua</label>
+                      <input
+                        type="text"
+                        name="rua"
+                        placeholder="Digite o nome da rua"
+                        id="rua"
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                  <div class="div-baixo-2">
+                    <div>
+                      <label>CEP</label>
+                      <input
+                        type="text"
+                        name="CEP"
+                        placeholder="Digite o CEP"
+                        id="cep"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Bairro</label>
+                      <input
+                        type="text"
+                        name="bairro"
+                        placeholder="Digite o Bairro"
+                        id="bairro"
+                        class="input-form"
+                      />
+                    </div>
+                    <div>
+                      <label>Complemento</label>
+                      <input
+                        type="text"
+                        name="complemento"
+                        placeholder="Digite um Complemento"
+                        id="complemento"
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div
+            class="listar-clientes-container"
+            id="listar"
+            style="display: none"
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th class="cliente_id">ID</th>
+                  <th class="nome">Nome</th>
+                  <th class="cpf">CPF</th>
+                  <th class="acao">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-tabela">
+                <!-- Clientes serão inseridos aqui por JavaScript -->
+              </tbody>
+            </table>
+            <div class="paginacao-clientes">
+              <button id="btn-anterior" disabled>Anterior</button>
+              <button id="btn-proximo" disabled>Próximo</button>
+            </div>
+          </div>
+        </section>
+        <section id="gerenciar-clientes" style="display: none">
+          <div class="gerenciar-clientes-container">
+            <div id="gerenciador-de-clientes">Gerenciador de Clientes</div>
+
+            <form id="form-editar-cliente">
+              <div class="gerenciar-container">
+                <div class="gerenciar-container-2">
+                  <input type="hidden" id="editar-id" />
+                  <div class="linha">
+                    <div class="coluna">
+                      <label>Nome</label>
+                      <input
+                        type="text"
+                        id="editar-nome"
+                        name="nome"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>cpf</label>
+                      <input
+                        type="text"
+                        id="editar-cpf"
+                        name="CPF"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Estado</label>
+                      <input
+                        type="text"
+                        id="editar-estado"
+                        name="estado"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>CEP</label>
+                      <input
+                        type="text"
+                        id="editar-cep"
+                        name="CEP"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                  <div class="linha">
+                    <div class="coluna">
+                      <label>Telefone</label>
+                      <input
+                        type="text"
+                        id="editar-numero_telefone"
+                        name="numero_telefone"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>RG</label>
+                      <input
+                        type="text"
+                        id="editar-rg"
+                        name="RG"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Cidade</label>
+                      <input
+                        type="text"
+                        id="editar-cidade"
+                        name="cidade"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Bairro</label>
+                      <input
+                        type="text"
+                        id="editar-bairro"
+                        name="bairro"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                  <div class="linha">
+                    <div class="coluna">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        id="editar-email"
+                        name="email"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Data de Nascimento</label>
+                      <input
+                        type="text"
+                        id="editar-data_nascimento"
+                        name="data_nascimento"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Rua</label>
+                      <input
+                        type="text"
+                        id="editar-rua"
+                        name="rua"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                    <div class="coluna">
+                      <label>Complemento</label>
+                      <input
+                        type="text"
+                        id="editar-complemento"
+                        name="complemento"
+                        placeholder="Sem dados..."
+                        class="input-form"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="linha-botoes">
+                  <button class="btn-salvar btn-press">Salvar</button>
+                  <button class="btn-deletar btn-press">DELETAR</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>
