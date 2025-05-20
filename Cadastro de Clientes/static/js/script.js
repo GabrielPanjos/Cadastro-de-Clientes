@@ -177,7 +177,7 @@ document.getElementById("btn-proximo").addEventListener("click", () => {
     }
 });
 
-document.querySelector("form").addEventListener("submit", function (event) {
+document.querySelector("form").addEventListener("submit", async function (event) {
     const nomeInput = document.getElementById("nome");
     const nome = nomeInput.value.trim();
     const cpfInput = document.getElementsByName("CPF")[0];
@@ -191,7 +191,62 @@ document.querySelector("form").addEventListener("submit", function (event) {
     const cepInput = document.getElementsByName("CEP")[0];
     const cep = cepInput.value.trim();
 
-    // Validação do Nome (como antes)
+    // Validação de Número de telefone
+    function validarTelefone(telefone) {
+        telefone = telefone.replace(/[^\d]/g, '');
+
+        if (telefone.length === 10) {
+            return true; // Fixo: DDD + número fixo
+        }
+
+        if (telefone.length === 11) {
+            return telefone[2] === '9'; // Celular: DDD + 9 + número
+        }
+
+        return false;
+    }
+
+    // Validador de CPF
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/[^\d]+/g, ''); // remove pontos e traços
+
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
+        let soma = 0;
+        for (let i = 0; i < 9; i++) {
+            soma += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+
+        let digito1 = 11 - (soma % 11);
+        digito1 = (digito1 >= 10) ? 0 : digito1;
+
+        if (digito1 !== parseInt(cpf.charAt(9))) return false;
+
+        soma = 0;
+        for (let i = 0; i < 10; i++) {
+            soma += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+
+        let digito2 = 11 - (soma % 11);
+        digito2 = (digito2 >= 10) ? 0 : digito2;
+
+        return digito2 === parseInt(cpf.charAt(10));
+    }
+
+    // Validações
+    if (celular && !validarTelefone(celular)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Telefone inválido',
+            text: 'Número deve conter 10 ou 11 dígitos válidos',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        celularInput.focus();
+        event.preventDefault();
+        return;
+    }
+
     if (nome === "") {
         Swal.fire({
             icon: 'error',
@@ -199,34 +254,36 @@ document.querySelector("form").addEventListener("submit", function (event) {
             showConfirmButton: false,
             timer: 3000
         });
-
         nomeInput.focus();
         event.preventDefault();
         return;
     }
 
-    // Validação do CPF (como antes)
     if (cpf === "") {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF obrigatório',
+            showConfirmButton: false,
+            timer: 3000
+        });
         cpfInput.focus();
         event.preventDefault();
         return;
     }
-    if (!/^\d{11}$/.test(cpf)) {
-        const erroCPF = document.getElementById("cpf-error"); // certo agora
-        erroCPF.textContent = "CPF não encontrado.";
+    if (!validarCPF(cpf)) {
+        const erroCPF = document.getElementById("cpf-error");
+        erroCPF.textContent = "CPF inválido.";
         erroCPF.classList.add("visible");
         cpfInput.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
         return;
     } else {
-        // limpa erro caso esteja válido
         const erroCPF = document.getElementById("cpf-error");
         erroCPF.textContent = "";
         erroCPF.classList.remove("visible");
-        cpfInput.style.border = ""; // volta ao padrão
+        cpfInput.style.border = "";
     }
 
-    // Validação da Data de Nascimento
     if (data_nascimento === "") {
         Swal.fire({
             icon: 'error',
@@ -234,7 +291,6 @@ document.querySelector("form").addEventListener("submit", function (event) {
             showConfirmButton: false,
             timer: 3000
         });
-
         inputData.focus();
         event.preventDefault();
         return;
@@ -242,52 +298,40 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     // Remove não dígitos
     data_nascimento = data_nascimento.replace(/\D/g, "");
-
     if (data_nascimento.length !== 8) {
         const erroData = document.getElementById("data-nascimento-error");
         erroData.textContent = "Data inválida. Use o formato dd/mm/aaaa.";
         erroData.classList.add("visible");
-        data_nascimento.style.border = "1.5px solid #FF3D51";
+        inputData.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
         return;
     } else {
-        // limpa erro caso esteja válido
         const erroData = document.getElementById("data-nascimento-error");
         erroData.textContent = "";
         erroData.classList.remove("visible");
-        cpfInput.style.border = ""; // volta ao padrão
+        inputData.style.border = "";
     }
 
     const dia = parseInt(data_nascimento.substring(0, 2));
     const mes = parseInt(data_nascimento.substring(2, 4));
     const ano = parseInt(data_nascimento.substring(4, 8));
 
-    // Validação real com Date
-    const data = new Date(ano, mes - 1, dia); // mês começa do zero
-    if (
-        data.getFullYear() !== ano ||
-        data.getMonth() !== mes - 1 ||
-        data.getDate() !== dia
-    ) {
+    const data = new Date(ano, mes - 1, dia);
+    if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
         Swal.fire({
             icon: 'error',
             title: 'Data inválida',
             showConfirmButton: false,
             timer: 3000
         });
-
         inputData.focus();
         event.preventDefault();
         return;
     }
 
-    // Converte para o formato AAAA-MM-DD
-    const dataFormatada = `${ano.toString().padStart(4, '0')}-${mes
-        .toString()
-        .padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
+    const dataFormatada = `${ano.toString().padStart(4, '0')}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
     inputData.value = dataFormatada;
 
-    // Validação do Email (como antes)
     if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
         Swal.fire({
             icon: 'error',
@@ -295,13 +339,11 @@ document.querySelector("form").addEventListener("submit", function (event) {
             showConfirmButton: false,
             timer: 3000
         });
-
         emailInput.focus();
         event.preventDefault();
         return;
     }
 
-    // Validação do Celular (como antes)
     if (celular && !/^\d{10,11}$/.test(celular)) {
         Swal.fire({
             icon: 'error',
@@ -309,13 +351,11 @@ document.querySelector("form").addEventListener("submit", function (event) {
             showConfirmButton: false,
             timer: 3000
         });
-
         celularInput.focus();
         event.preventDefault();
         return;
     }
 
-    // Validação do CEP (como antes)
     if (cep && !/^\d{8}$/.test(cep)) {
         Swal.fire({
             icon: 'error',
@@ -323,13 +363,56 @@ document.querySelector("form").addEventListener("submit", function (event) {
             showConfirmButton: false,
             timer: 3000
         });
-
         cepInput.focus();
         event.preventDefault();
         return;
     }
 
-    // Se todas as validações passarem, o formulário é enviado
+    // **Aqui é onde você deve adicionar o fetch para enviar os dados**
+    try {
+        const formData = new FormData();
+        formData.append("nome", nome);
+        formData.append("CPF", cpf);
+        formData.append("data_nascimento", dataFormatada);
+        formData.append("email", email);
+        formData.append("numero_telefone", celular);
+        formData.append("CEP", cep);
+        // Adicione outros campos conforme necessário
+
+        const response = await fetch('/clientes/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Cadastro realizado com sucesso!',
+                text: result.message,
+                timer: 3000,
+                showConfirmButton: false
+            });
+            // Opcional: Redirecionar ou limpar o formulário
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao cadastrar',
+                text: result.error || 'Erro desconhecido.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+    } catch (error) {
+        console.error("Erro ao enviar o formulário:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro de conexão',
+            text: 'Não foi possível se conectar ao servidor.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }
 });
 
 document.getElementById("btn-pesquisar").addEventListener("click", () => {
@@ -450,6 +533,8 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
 
             const formData = new FormData(form);
+            const cpf = formData.get("CPF");
+            formData.set("CPF", cpf.replace(/[^\d]+/g, ""));
 
             try {
                 const response = await fetch('/clientes/', {
@@ -457,34 +542,53 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: formData
                 });
 
-                const result = await response.json();
-
+                // VERIFICA SE A RESPOSTA FOI BEM-SUCEDIDA (STATUS 200-299)
                 if (response.ok) {
-                    alert(result.message);
-                    form.reset(); // limpa o formulário
+                    const result = await response.json();
+                    console.log("Resposta do servidor:", result);
+                    // Exibir mensagem de sucesso usando Swal
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: result.message, // Usa a mensagem retornada pelo backend
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    form.reset(); // Opcional: Limpa o formulário após o sucesso
                 } else {
+                    // Se a resposta não foi OK (ex: 400, 500), tenta ler o JSON de erro
+                    let errorData;
+                    try {
+                        errorData = await response.json(); // Tenta ler o erro como JSON
+                    } catch (jsonError) {
+                        // Se não for JSON, apenas usa o status text
+                        errorData = { error: response.statusText || 'Erro desconhecido.' };
+                    }
+
+                    console.error("Erro ao cadastrar cliente:", errorData);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Erro ao salvar cliente',
-                        text: 'Algumas informações não estão totalmente válidas',
-                        showConfirmButton: false,
-                        timer: 3000
+                        title: 'Erro!',
+                        text: errorData.error || 'Não foi possível cadastrar o cliente.', // Usa a mensagem de erro do backend ou uma genérica
+                        timer: 3000,
+                        showConfirmButton: false
                     });
-
                 }
             } catch (error) {
-                console.error('Erro:', error);
+                // Este catch só será acionado para erros de rede *reais*
+                console.error("Erro ao enviar o formulário (erro de rede):", error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Erro de conexão com o servidor',
-                    showConfirmButton: false,
-                    timer: 3000
+                    title: 'Erro de conexão',
+                    text: 'Não foi possível se conectar ao servidor. Verifique sua conexão.',
+                    timer: 3000,
+                    showConfirmButton: false
                 });
-
             }
         });
     }
 });
+
 
 document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
     e.preventDefault();
