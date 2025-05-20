@@ -421,19 +421,14 @@ tbody tr:nth-child(even) {
 }
 
 .error-message {
-    display: none;
-    color: red;
+    display: none; /* Escondido por padrão */
+    color: #FF3D51;
     font-size: 0.8em;
-    /* Tamanho menor para a mensagem */
-    display: block;
-    /* Garante que a mensagem vá para a próxima linha */
     margin-top: 5px;
-    /* Espaço entre o input e a mensagem */
 }
 
 .error-message.visible {
-    display: inline;
-    /* Só mostra quando tiver erro */
+    display: block; /* Visível como bloco quando a classe é adicionada */
 }
 
 label.error {

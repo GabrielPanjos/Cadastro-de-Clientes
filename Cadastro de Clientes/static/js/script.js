@@ -178,17 +178,27 @@ document.getElementById("btn-proximo").addEventListener("click", () => {
 });
 
 document.querySelector("form").addEventListener("submit", async function (event) {
+    // 1. Obter os valores dos campos E os elementos dos inputs/spans de erro
     const nomeInput = document.getElementById("nome");
     const nome = nomeInput.value.trim();
-    const cpfInput = document.getElementsByName("CPF")[0];
+    const erroNomeSpan = document.getElementById("nome-error"); // <-- OK, ID correto do span do nome
+
+    // --- CORREÇÃO AQUI para o CPF ---
+    const cpfInput = document.getElementById("input-cpf"); // <-- OBTENDE O INPUT DO CPF PELO ID
     const cpf = cpfInput.value.trim();
-    const inputData = document.getElementById("data_nascimento");
+    const erroCPFSpan = document.getElementById("cpf-error"); // <-- OK, ID correto do span do CPF
+    // --- FIM DA CORREÇÃO DO CPF ---
+
+    const inputData = document.getElementById("data_nascimento"); // Certifique-se que o ID para data é este
     let data_nascimento = inputData.value.trim();
-    const emailInput = document.getElementsByName("email")[0];
+
+    const emailInput = document.getElementsByName("email")[0]; // Supondo que não tem ID para email input
     const email = emailInput.value.trim();
-    const celularInput = document.getElementsByName("numero_telefone")[0];
+
+    const celularInput = document.getElementsByName("numero_telefone")[0]; // Supondo que não tem ID para celular input
     const celular = celularInput.value.trim();
-    const cepInput = document.getElementsByName("CEP")[0];
+
+    const cepInput = document.getElementsByName("CEP")[0]; // Supondo que não tem ID para CEP input
     const cep = cepInput.value.trim();
 
     // Validação de Número de telefone
@@ -234,6 +244,7 @@ document.querySelector("form").addEventListener("submit", async function (event)
     }
 
     // Validações
+    // VALIDAÇÃO DO NÚMERO DO CELULAR
     if (celular && !validarTelefone(celular)) {
         Swal.fire({
             icon: 'error',
@@ -247,18 +258,63 @@ document.querySelector("form").addEventListener("submit", async function (event)
         return;
     }
 
+    // --- VALIDAÇÃO DE NOME ---
+    const nomeRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
+    let nomeValido = true;
+    let mensagemErroNome = "";
+
     if (nome === "") {
         Swal.fire({
             icon: 'error',
-            title: 'O campo Nome é obrigatório',
+            title: 'Nome obrigatório',
             showConfirmButton: false,
             timer: 3000
         });
         nomeInput.focus();
+        nomeValido = false;
+        mensagemErroNome = "Nome é obrigatório.";
+    } else if (!nomeRegex.test(nome)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Nome inválido',
+            text: 'O nome deve conter apenas letras e espaços.',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        nomeInput.focus();
+        nomeValido = false;
+        mensagemErroNome = "O nome deve conter apenas letras e espaços.";
+    }
+
+    // Aplica a borda vermelha e a mensagem no span do nome, ou remove
+    if (!nomeValido) {
+        nomeInput.style.border = "1.5px solid #FF3D51";
+        if (erroNomeSpan) { // Verifica se o span existe
+            erroNomeSpan.textContent = mensagemErroNome;
+            erroNomeSpan.classList.add("visible");
+        }
+        event.preventDefault();
+        return;
+    } else {
+        nomeInput.style.border = "";
+        if (erroNomeSpan) {
+            erroNomeSpan.textContent = "";
+            erroNomeSpan.classList.remove("visible");
+        }
+    }
+
+    // VALIDAÇÃO DO CPF
+    if (cpf === "") {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF obrigatório',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        cpfInput.focus();
         event.preventDefault();
         return;
     }
-
     if (cpf === "") {
         Swal.fire({
             icon: 'error',
@@ -271,29 +327,19 @@ document.querySelector("form").addEventListener("submit", async function (event)
         return;
     }
     if (!validarCPF(cpf)) {
-        const erroCPF = document.getElementById("cpf-error");
-        erroCPF.textContent = "CPF inválido.";
-        erroCPF.classList.add("visible");
+        if (erroCPFSpan) { // Verifica se o span existe
+            erroCPFSpan.textContent = "CPF inválido.";
+            erroCPFSpan.classList.add("visible");
+        }
         cpfInput.style.border = "1.5px solid #FF3D51";
         event.preventDefault();
         return;
     } else {
-        const erroCPF = document.getElementById("cpf-error");
-        erroCPF.textContent = "";
-        erroCPF.classList.remove("visible");
+        if (erroCPFSpan) {
+            erroCPFSpan.textContent = "";
+            erroCPFSpan.classList.remove("visible");
+        }
         cpfInput.style.border = "";
-    }
-
-    if (data_nascimento === "") {
-        Swal.fire({
-            icon: 'error',
-            title: 'O campo Data de Nascimento é obrigatório',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        inputData.focus();
-        event.preventDefault();
-        return;
     }
 
     // Remove não dígitos
@@ -534,7 +580,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const formData = new FormData(form);
             const cpf = formData.get("CPF");
+
+            // Limpa pontos e traços do CPF antes de enviar
             formData.set("CPF", cpf.replace(/[^\d]+/g, ""));
+
+            // Você pode fazer o mesmo com outros campos como CEP aqui no JS antes de enviar
 
             try {
                 const response = await fetch('/clientes/', {
@@ -542,41 +592,43 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: formData
                 });
 
-                // VERIFICA SE A RESPOSTA FOI BEM-SUCEDIDA (STATUS 200-299)
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log("Resposta do servidor:", result);
-                    // Exibir mensagem de sucesso usando Swal
+                // --- PONTO CRÍTICO: VERIFIQUE response.ok ---
+                if (response.ok) { // Isso verifica se o status HTTP está no range 200-299
+                    const result = await response.json(); // Se OK, então o corpo é JSON
+                    console.log("Cadastro bem-sucedido:", result.message);
                     Swal.fire({
                         icon: 'success',
                         title: 'Sucesso!',
-                        text: result.message, // Usa a mensagem retornada pelo backend
+                        text: result.message, // Usa a mensagem que veio do Flask
                         timer: 3000,
                         showConfirmButton: false
                     });
-                    form.reset(); // Opcional: Limpa o formulário após o sucesso
+                    form.reset(); // Opcional: limpa o formulário após o sucesso
                 } else {
-                    // Se a resposta não foi OK (ex: 400, 500), tenta ler o JSON de erro
+                    // Se response.ok for false, significa que o servidor respondeu com um erro (4xx, 5xx)
+                    // Tente ler o JSON de erro, se houver
                     let errorData;
                     try {
-                        errorData = await response.json(); // Tenta ler o erro como JSON
-                    } catch (jsonError) {
-                        // Se não for JSON, apenas usa o status text
-                        errorData = { error: response.statusText || 'Erro desconhecido.' };
+                        errorData = await response.json();
+                    } catch (e) {
+                        // Se o corpo não for JSON (ex: HTML de erro), capture o erro
+                        errorData = { error: 'Resposta do servidor não é JSON ou vazia.', status: response.status };
+                        console.error("Erro ao parsear JSON de erro:", e, response);
                     }
 
-                    console.error("Erro ao cadastrar cliente:", errorData);
+                    const errorMessage = errorData.error || `Erro desconhecido do servidor. Status: ${response.status}`;
+                    console.error("Erro do servidor:", errorMessage, errorData);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Erro!',
-                        text: errorData.error || 'Não foi possível cadastrar o cliente.', // Usa a mensagem de erro do backend ou uma genérica
-                        timer: 3000,
-                        showConfirmButton: false
+                        title: 'Erro no Cadastro',
+                        text: errorMessage,
+                        showConfirmButton: true
                     });
                 }
             } catch (error) {
-                // Este catch só será acionado para erros de rede *reais*
-                console.error("Erro ao enviar o formulário (erro de rede):", error);
+                // Este bloco 'catch' AGORA só será acionado se houver um problema REAL de rede
+                // (por exemplo, servidor offline, CORS bloqueando a requisição, etc.)
+                console.error("Erro de conexão (problema de rede real):", error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro de conexão',
