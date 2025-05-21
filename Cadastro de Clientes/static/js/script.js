@@ -754,23 +754,32 @@ function configurarBotoesEditar() {
 
 // Evento para botão "DELETAR" no formulário de edição
 document.querySelector(".btn-deletar").addEventListener("click", async function (e) {
-    e.preventDefault(); // impede envio padrão do formulário
+    e.preventDefault();
 
     const clienteId = document.getElementById("editar-id").value;
 
     if (!clienteId) {
         Swal.fire({
             icon: 'error',
-            title: 'nenhum cliente selecionado',
+            title: 'Nenhum cliente selecionado',
             showConfirmButton: false,
             timer: 3000
         });
-
         return;
     }
 
-    const confirmar = confirm("Tem certeza que deseja deletar este cliente?");
-    if (!confirmar) return;
+    const confirmar = await Swal.fire({
+        title: 'Tem certeza?',
+        text: "Essa ação não pode ser desfeita!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, deletar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmar.isConfirmed) return;
 
     try {
         const response = await fetch(`/clientes/${clienteId}/deletar`, {
@@ -780,30 +789,34 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
         const data = await response.json();
 
         if (response.ok) {
-            alert(data.message);
-            document.getElementById("form-editar-cliente").reset();
-            listar_clientes();     // mostra a lista
-            carregarClientes(0);   // recarrega a tabela
+            await Swal.fire({
+                icon: 'success',
+                title: 'Cliente deletado com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            // Redireciona para a página inicial
+            window.location.href = "/clientes";
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Erro ao detectar cliente',
+                title: 'Erro ao deletar cliente',
                 showConfirmButton: false,
                 timer: 3000
             });
-
         }
     } catch (err) {
         console.error("Erro ao deletar cliente:", err);
         Swal.fire({
             icon: 'error',
-            title: 'Erro de conexão ao servidor',
+            title: 'Erro de conexão com o servidor',
             showConfirmButton: false,
             timer: 3000
         });
-
     }
 });
+
 
 function atualizarCliente() {
     const clienteId = document.getElementById("editar-id").value;
