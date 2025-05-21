@@ -641,6 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+/*
 
 document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -702,6 +703,8 @@ document.getElementById('form-editar-cliente').addEventListener('submit', async 
 
     }
 });
+
+*/
 
 function configurarBotoesEditar() {
     const botoesEditar = document.getElementsByClassName('btn-editar');
@@ -818,12 +821,22 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
 });
 
 
-function atualizarCliente() {
+async function atualizarCliente(e) {
+    if (e) e.preventDefault();
     const clienteId = document.getElementById("editar-id").value;
     const nome = document.getElementById("editar-nome").value;
     const cpf = document.getElementById("editar-cpf").value;
     const rg = document.getElementById("editar-rg").value;
     const dataNascimento = document.getElementById("editar-data_nascimento").value;
+    // converte de DD/MM/AAAA para AAAA-MM-DD
+    function formatarDataParaISO(data) {
+        const partes = data.split('/');
+        if (partes.length !== 3) return data;
+        const [dia, mes, ano] = partes;
+        return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    }
+
+    const dataNascimentoFormatada = formatarDataParaISO(dataNascimento);
     const email = document.getElementById("editar-email").value;
     const telefone = document.getElementById("editar-numero_telefone").value;
     const estado = document.getElementById("editar-estado").value;
@@ -833,6 +846,21 @@ function atualizarCliente() {
     const bairro = document.getElementById("editar-bairro").value;
     const complemento = document.getElementById("editar-complemento").value;
 
+    // ✅ Confirmação com SweetAlert2
+    const confirmar = await Swal.fire({
+        title: 'Deseja atualizar este cliente?',
+        text: 'Tem certeza que deseja salvar as alterações?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, atualizar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+    });
+
+    if (!confirmar.isConfirmed) return; // usuário cancelou
+
+    // ✅ Envio da atualização
     fetch(`/clientes/editar/${clienteId}`, {
         method: "PUT",
         headers: {
@@ -842,7 +870,7 @@ function atualizarCliente() {
             nome,
             cpf,
             rg,
-            data_nascimento: dataNascimento,
+            data_nascimento: dataNascimentoFormatada,
             email,
             numero_telefone: telefone,
             estado,
@@ -861,7 +889,7 @@ function atualizarCliente() {
             if (ok) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Sucesso!',
+                    title: 'Atualizado!',
                     text: body.message || 'Cliente atualizado com sucesso!',
                     timer: 2000,
                     showConfirmButton: false
@@ -870,13 +898,13 @@ function atualizarCliente() {
             } else if (status === 404) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Atenção!',
+                    title: 'Cliente não encontrado',
                     text: body.message || 'Cliente não encontrado.'
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Erro!',
+                    title: 'Erro ao atualizar',
                     text: body.error || 'Erro ao atualizar cliente.'
                 });
             }
@@ -889,9 +917,8 @@ function atualizarCliente() {
             });
             console.error("Erro na requisição:", error);
         });
-
-
 }
+
 
 document.querySelectorAll(".btn-salvar").forEach(botao => {
     botao.addEventListener("click", atualizarCliente);
