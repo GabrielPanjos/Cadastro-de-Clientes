@@ -208,6 +208,25 @@ document.querySelector("form").addEventListener("submit", async function (event)
     let rg = rgInput.value.trim();
     const erroRGSpan = document.getElementById("rg-error");
 
+    const estadoInput = document.getElementsByName("estado")[0];
+    const estado = estadoInput.value.trim();
+    const erroEstadoSpan = document.getElementById("estado-error");
+
+    const cidadeInput = document.getElementsByName("cidade")[0];
+    const cidade = cidadeInput.value.trim();
+    const erroCidadeSpan = document.getElementById("cidade-error");
+
+    const ruaInput = document.getElementsByName("rua")[0];
+    const rua = ruaInput.value.trim();
+    const erroRuaSpan = document.getElementById("rua-error");
+
+    const bairroInput = document.getElementsByName("bairro")[0];
+    const bairro = bairroInput.value.trim();
+    const erroBairroSpan = document.getElementById("bairro-error");
+
+    const complementoInput = document.getElementsByName("complemento")[0];
+    const complemento = complementoInput.value.trim();
+    const erroComplementoSpan = document.getElementById("complemento-error");
 
     function validarTelefone(telefone) {
         telefone = telefone.replace(/[^\d]/g, '');
@@ -219,17 +238,6 @@ document.querySelector("form").addEventListener("submit", async function (event)
         if (telefone.length === 11) {
             return telefone[2] === '9'; // celular: DDD (2) + 9 + número (8)
         }
-
-        return false;
-    }
-
-    function validarTelefone(telefone) {
-        // Remove tudo que não é dígito
-        telefone = telefone.replace(/[^\d]/g, '');
-
-        // Verifica se tem 10 ou 11 dígitos
-        if (telefone.length === 10) return true; // Fixo com DDD
-        if (telefone.length === 11) return telefone[2] === '9'; // Celular com DDD
 
         return false;
     }
@@ -249,52 +257,171 @@ document.querySelector("form").addEventListener("submit", async function (event)
         return digito2 === parseInt(cpf.charAt(10));
     }
 
-    // verificar celular
-    const celularLimpo = celular.replace(/[^\d]/g, '');
-    const resTel = await fetch(`/clientes/buscar?termo=${celularLimpo}`);
-    const resTelData = await resTel.json();
-
-    if (resTelData.some(c => c.numero_telefone === celularLimpo)) {
+    // Verificar estado (letras e espaços, se preenchido)
+    if (estado && !/^[A-Za-zÀ-ÿ\s]{2,}$/.test(estado)) {
         Swal.fire({
             icon: 'error',
-            title: 'Celular já cadastrado',
-            text: 'Este número de telefone já está registrado.',
+            title: 'Estado inválido',
+            text: 'O estado deve conter apenas letras.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        estadoInput.style.border = "1.5px solid #FF3D51";
+        if (erroEstadoSpan) {
+            erroEstadoSpan.textContent = "O estado deve conter apenas letras.";
+            erroEstadoSpan.classList.add("visible");
+        }
+        estadoInput.focus();
+        return;
+    } else {
+        estadoInput.style.border = "";
+        if (erroEstadoSpan) {
+            erroEstadoSpan.textContent = "";
+            erroEstadoSpan.classList.remove("visible");
+        }
+    }
+
+    // Verificar cidade
+    if (cidade && !/^[A-Za-zÀ-ÿ\s]{2,}$/.test(cidade)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Cidade inválida',
+            text: 'A cidade deve conter apenas letras.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cidadeInput.style.border = "1.5px solid #FF3D51";
+        if (erroCidadeSpan) {
+            erroCidadeSpan.textContent = "A cidade deve conter apenas letras.";
+            erroCidadeSpan.classList.add("visible");
+        }
+        cidadeInput.focus();
+        return;
+    } else {
+        cidadeInput.style.border = "";
+        if (erroCidadeSpan) {
+            erroCidadeSpan.textContent = "";
+            erroCidadeSpan.classList.remove("visible");
+        }
+    }
+
+    // Verificar rua
+    if (rua && rua.length < 3) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rua inválida',
+            text: 'A rua deve conter no mínimo 3 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        ruaInput.style.border = "1.5px solid #FF3D51";
+        if (erroRuaSpan) {
+            erroRuaSpan.textContent = "A rua está muito curta.";
+            erroRuaSpan.classList.add("visible");
+        }
+        ruaInput.focus();
+        return;
+    } else {
+        ruaInput.style.border = "";
+        if (erroRuaSpan) {
+            erroRuaSpan.textContent = "";
+            erroRuaSpan.classList.remove("visible");
+        }
+    }
+
+    // Verificar bairro
+    if (bairro && bairro.length < 3) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Bairro inválido',
+            text: 'O bairro deve conter no mínimo 3 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        bairroInput.style.border = "1.5px solid #FF3D51";
+        if (erroBairroSpan) {
+            erroBairroSpan.textContent = "O bairro está muito curto.";
+            erroBairroSpan.classList.add("visible");
+        }
+        bairroInput.focus();
+        return;
+    } else {
+        bairroInput.style.border = "";
+        if (erroBairroSpan) {
+            erroBairroSpan.textContent = "";
+            erroBairroSpan.classList.remove("visible");
+        }
+    }
+
+    // Verificar complemento (apenas se quiser limitar caracteres especiais)
+    if (complemento && complemento.length < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Complemento inválido',
+            text: 'O complemento está muito curto.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        complementoInput.style.border = "1.5px solid #FF3D51";
+        if (erroComplementoSpan) {
+            erroComplementoSpan.textContent = "Complemento muito curto.";
+            erroComplementoSpan.classList.add("visible");
+        }
+        complementoInput.focus();
+        return;
+    } else {
+        complementoInput.style.border = "";
+        if (erroComplementoSpan) {
+            erroComplementoSpan.textContent = "";
+            erroComplementoSpan.classList.remove("visible");
+        }
+    }
+
+    // verificar celular
+    const celularLimpo = celular.replace(/[^\d]/g, '');
+
+    if (celular && !validarTelefone(celular)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Telefone inválido',
+            text: 'Número deve conter 10 ou 11 dígitos válidos',
             timer: 3000,
             showConfirmButton: false
         });
         celularInput.style.border = "1.5px solid #FF3D51";
         if (erroTelefoneSpan) {
-            erroTelefoneSpan.textContent = "Telefone já cadastrado.";
+            erroTelefoneSpan.textContent = "Número inválido.";
             erroTelefoneSpan.classList.add("visible");
         }
         celularInput.focus();
         return;
-    } else {
-        celularInput.style.border = "";
-        if (erroTelefoneSpan) {
-            erroTelefoneSpan.textContent = "";
-            erroTelefoneSpan.classList.remove("visible");
-        }
+    }
 
-        // verificar duplicidade de celular
-        if (celular) {
-            const resTel = await fetch(`/clientes/buscar?termo=${celular}`);
-            const resTelData = await resTel.json();
-            if (resTelData.some(c => c.numero_telefone === celular)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Celular já cadastrado',
-                    text: 'Este número de telefone já está registrado.',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-                celularInput.style.border = "1.5px solid #FF3D51";
-                if (erroTelefoneSpan) {
-                    erroTelefoneSpan.textContent = "Telefone já cadastrado.";
-                    erroTelefoneSpan.classList.add("visible");
-                }
-                celularInput.focus();
-                return;
+    // Verifica duplicidade
+    if (celular) {
+        const resTel = await fetch(`/clientes/buscar?termo=${celularLimpo}`);
+        const resTelData = await resTel.json();
+
+        if (resTelData.some(c => c.numero_telefone && c.numero_telefone.replace(/[^\d]/g, '') === celularLimpo)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Celular já cadastrado',
+                text: 'Este número de telefone já está registrado.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            celularInput.style.border = "1.5px solid #FF3D51";
+            if (erroTelefoneSpan) {
+                erroTelefoneSpan.textContent = "Telefone já cadastrado.";
+                erroTelefoneSpan.classList.add("visible");
+            }
+            celularInput.focus();
+            return;
+        } else {
+            celularInput.style.border = "";
+            if (erroTelefoneSpan) {
+                erroTelefoneSpan.textContent = "";
+                erroTelefoneSpan.classList.remove("visible");
             }
         }
     }
@@ -479,7 +606,6 @@ document.querySelector("form").addEventListener("submit", async function (event)
         }
 
         // verificar duplicidade de email
-        // verificar duplicidade de email
         if (email) {
             const resEmail = await fetch(`/clientes/buscar?termo=${email}`);
             const resEmailData = await resEmail.json();
@@ -560,7 +686,6 @@ document.querySelector("form").addEventListener("submit", async function (event)
         }
     }
 
-
     try {
         const formData = new FormData();
         formData.append("nome", nome);
@@ -570,6 +695,11 @@ document.querySelector("form").addEventListener("submit", async function (event)
         formData.append("numero_telefone", celular);
         formData.append("CEP", cep);
         formData.append("RG", rgLimpo);
+        formData.append("estado", estado);
+        formData.append("cidade", cidade);
+        formData.append("rua", rua);
+        formData.append("bairro", bairro);
+        formData.append("complemento", complemento);
 
         const response = await fetch('/clientes/', {
             method: 'POST',
@@ -886,13 +1016,34 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
     }
 });
 
+// Funções de Validações
+function validarTelefone(telefone) {
+    telefone = telefone.replace(/[^\d]/g, '');
+    if (telefone.length === 10) return true; // fixo
+    if (telefone.length === 11) return telefone[2] === '9'; // celular com 9
+    return false;
+}
+
 async function atualizarCliente(e) {
     if (e) e.preventDefault();
+
+    // PEGANDO OS VALORES
     const clienteId = document.getElementById("editar-id").value;
-    const nome = document.getElementById("editar-nome").value;
-    const cpf = document.getElementById("editar-cpf").value;
-    const rg = document.getElementById("editar-rg").value;
+
+    const nomeInput = document.getElementById("editar-nome");
+    const nome = nomeInput.value.trim();
+    const erroNomeSpan = document.getElementById("editar-nome-error");
+
+    const cpfInput = document.getElementById("editar-cpf");
+    let cpf = cpfInput.value.trim();
+    const erroCPFSpan = document.getElementById("editar-cpf-error");
+
+    const rgInput = document.getElementById("editar-rg");
+    let rg = rgInput.value.trim();
+    const erroRGSpan = document.getElementById("editar-rg-error");
+
     const dataNascimento = document.getElementById("editar-data_nascimento").value;
+
     // converte de DD/MM/AAAA para AAAA-MM-DD
     function formatarDataParaISO(data) {
         const partes = data.split('/');
@@ -902,14 +1053,444 @@ async function atualizarCliente(e) {
     }
 
     const dataNascimentoFormatada = formatarDataParaISO(dataNascimento);
-    const email = document.getElementById("editar-email").value;
-    const telefone = document.getElementById("editar-numero_telefone").value;
-    const estado = document.getElementById("editar-estado").value;
-    const cidade = document.getElementById("editar-cidade").value;
-    const rua = document.getElementById("editar-rua").value;
-    const cep = document.getElementById("editar-cep").value;
-    const bairro = document.getElementById("editar-bairro").value;
-    const complemento = document.getElementById("editar-complemento").value;
+
+    const emailInput = document.getElementById("editar-email");
+    const email = emailInput.value.trim();
+    const erroEmailSpan = document.getElementById("editar-email-error");
+
+    const celularInput = document.getElementById("editar-numero_telefone");
+    const celular = celularInput.value.trim().replace(/[^\d]+/g, '');
+    const erroTelefoneSpan = document.getElementById("editar-telefone-error");
+
+    const estadoInput = document.getElementById("editar-estado");
+    const estado = estadoInput.value.trim();
+    const erroEstadoSpan = document.getElementById("editar-estado-error");
+
+    const cidadeInput = document.getElementById("editar-cidade");
+    const cidade = cidadeInput.value.trim();
+    const erroCidadeSpan = document.getElementById("editar-cidade-error");
+
+    const ruaInput = document.getElementById("editar-rua");
+    const rua = ruaInput.value.trim();
+    const erroRuaSpan = document.getElementById("editar-rua-error");
+
+    const cepInput = document.getElementById("editar-cep");
+    const cep = cepInput.value.trim();
+    const erroCepSpan = document.getElementById("editar-cep-error");
+
+    const bairroInput = document.getElementById("editar-bairro");
+    const bairro = bairroInput.value.trim();
+    const erroBairroSpan = document.getElementById("editar-bairro-error");
+
+    const complementoInput = document.getElementById("editar-complemento");
+    const complemento = complementoInput.value.trim();
+    const erroComplementoSpan = document.getElementById("editar-complemento-error");
+
+    // ✅ VALIDAÇÃO DO NOME
+    const nomeRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
+    let nomeValido = true;
+    let mensagemErroNome = "";
+
+    if (nome === "") {
+        mensagemErroNome = "Nome é obrigatório.";
+        nomeValido = false;
+    } else if (!nomeRegex.test(nome)) {
+        mensagemErroNome = "O nome deve conter apenas letras e espaços.";
+        nomeValido = false;
+    }
+
+    if (!nomeValido) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Nome inválido',
+            text: mensagemErroNome,
+            timer: 3000,
+            showConfirmButton: false
+        });
+        nomeInput.style.border = "1.5px solid #FF3D51";
+        if (erroNomeSpan) {
+            erroNomeSpan.textContent = mensagemErroNome;
+            erroNomeSpan.classList.add("visible");
+        }
+        nomeInput.focus();
+        return;
+    } else {
+        nomeInput.style.border = "";
+        if (erroNomeSpan) {
+            erroNomeSpan.textContent = "";
+            erroNomeSpan.classList.remove("visible");
+        }
+    }
+
+    // 🔧 remove pontos/traços
+    const cpfLimpo = cpf.replace(/[^\d]+/g, '');
+
+    // ⚠️ CPF obrigatório
+    if (!cpfLimpo) {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF obrigatório',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cpfInput.style.border = "1.5px solid #FF3D51";
+        if (erroCPFSpan) {
+            erroCPFSpan.textContent = "O CPF é obrigatório.";
+            erroCPFSpan.classList.add("visible");
+        }
+        cpfInput.focus();
+        return;
+    }
+
+    // ✅ Validação do CPF (função reutilizável)
+    function validarCPF(cpf) {
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+        let soma = 0;
+        for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+        let digito1 = 11 - (soma % 11);
+        digito1 = digito1 >= 10 ? 0 : digito1;
+        if (digito1 !== parseInt(cpf[9])) return false;
+        soma = 0;
+        for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+        let digito2 = 11 - (soma % 11);
+        digito2 = digito2 >= 10 ? 0 : digito2;
+        return digito2 === parseInt(cpf[10]);
+    }
+
+    if (!validarCPF(cpfLimpo)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF inválido',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cpfInput.style.border = "1.5px solid #FF3D51";
+        if (erroCPFSpan) {
+            erroCPFSpan.textContent = "CPF inválido.";
+            erroCPFSpan.classList.add("visible");
+        }
+        cpfInput.focus();
+        return;
+    }
+
+    // ✅ Verifica se o CPF já está cadastrado
+    const resCpf = await fetch(`/clientes/buscar?termo=${cpfLimpo}`);
+    const resCpfData = await resCpf.json();
+
+    if (resCpfData.some(c => c.cpf === cpfLimpo && c.id_clientes != clienteId)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF já cadastrado',
+            text: 'Este CPF já está registrado no sistema.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cpfInput.style.border = "1.5px solid #FF3D51";
+        if (erroCPFSpan) {
+            erroCPFSpan.textContent = "CPF já cadastrado.";
+            erroCPFSpan.classList.add("visible");
+        }
+        cpfInput.focus();
+        return;
+    }
+
+    // ✅ CPF válido: limpa o erro
+    cpfInput.style.border = "";
+    if (erroCPFSpan) {
+        erroCPFSpan.textContent = "";
+        erroCPFSpan.classList.remove("visible");
+    }
+
+    // ⏩ Atualiza a variável original para o CPF limpo, sem pontuação
+    cpf = cpfLimpo;
+
+    if (cep && !/^\d{8}$/.test(cep)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'CEP inválido',
+            text: 'O CEP deve conter exatamente 8 dígitos numéricos.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cepInput.style.border = "1.5px solid #FF3D51";
+        if (erroCepSpan) {
+            erroCepSpan.textContent = "CEP inválido. Digite 8 números.";
+            erroCepSpan.classList.add("visible");
+        }
+        cepInput.focus();
+        return;
+    } else {
+        cepInput.style.border = "";
+        if (erroCepSpan) {
+            erroCepSpan.textContent = "";
+            erroCepSpan.classList.remove("visible");
+        }
+    }
+
+    // Se tiver RG preenchido
+    if (rg) {
+        const rgLimpo = rg.replace(/[^\d]+/g, '');
+
+        // ✅ Verifica se é só número e tem entre 5 e 15 dígitos
+        if (!/^\d{5,15}$/.test(rgLimpo)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'RG inválido',
+                text: 'O RG deve conter apenas números entre 5 e 15 dígitos.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            rgInput.style.border = "1.5px solid #FF3D51";
+            if (erroRGSpan) {
+                erroRGSpan.textContent = "RG inválido.";
+                erroRGSpan.classList.add("visible");
+            }
+            rgInput.focus();
+            return;
+        }
+
+        // 🔁 Verificar duplicidade (ignorar se for do mesmo cliente)
+        const resRG = await fetch(`/clientes/buscar?termo=${rgLimpo}`);
+        const resRGData = await resRG.json();
+
+        if (resRGData.some(c => c.rg && c.rg.replace(/[^\d]+/g, '') === rgLimpo && c.id_clientes != clienteId)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'RG já cadastrado',
+                text: 'Este RG já está registrado no sistema.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            rgInput.style.border = "1.5px solid #FF3D51";
+            if (erroRGSpan) {
+                erroRGSpan.textContent = "RG já cadastrado.";
+                erroRGSpan.classList.add("visible");
+            }
+            rgInput.focus();
+            return;
+        }
+
+        // ✅ Tudo certo com o RG → atualiza a variável com valor limpo
+        rg = rgLimpo;
+    }
+
+    // RG vazio ou válido → limpa estilos de erro
+    rgInput.style.border = "";
+    if (erroRGSpan) {
+        erroRGSpan.textContent = "";
+        erroRGSpan.classList.remove("visible");
+    }
+
+    if (email) {
+        let emailValido = true;
+        let mensagemErroEmail = "";
+
+        if (!email.includes("@")) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve conter '@'.";
+        } else if (!/(gmail|hotmail|outlook)/i.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve conter domínio válido (gmail, hotmail ou outlook).";
+        } else if (!/\.[a-z]{2,}$/.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve terminar com um domínio (.com, .net etc).";
+        } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Formato de email inválido.";
+        }
+
+        if (!emailValido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Email inválido',
+                text: mensagemErroEmail,
+                timer: 3000,
+                showConfirmButton: false
+            });
+            emailInput.style.border = "1.5px solid #FF3D51";
+            if (erroEmailSpan) {
+                erroEmailSpan.textContent = mensagemErroEmail;
+                erroEmailSpan.classList.add("visible");
+            }
+            emailInput.focus();
+            return;
+        }
+
+        // 🔁 Verifica duplicidade (ignorando o próprio cliente)
+        const resEmail = await fetch(`/clientes/buscar?termo=${email}`);
+        const resEmailData = await resEmail.json();
+
+        if (resEmailData.some(c => c.email === email && c.id_clientes != clienteId)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Email já cadastrado',
+                text: 'Este email já está registrado no sistema.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            emailInput.style.border = "1.5px solid #FF3D51";
+            if (erroEmailSpan) {
+                erroEmailSpan.textContent = "Email já cadastrado.";
+                erroEmailSpan.classList.add("visible");
+            }
+            emailInput.focus();
+            return;
+        }
+
+        // Tudo certo → limpa estilo de erro
+        emailInput.style.border = "";
+        if (erroEmailSpan) {
+            erroEmailSpan.textContent = "";
+            erroEmailSpan.classList.remove("visible");
+        }
+    }
+
+    if (celular) {
+        if (!validarTelefone(celular)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Telefone inválido',
+                text: 'O número deve ter 10 ou 11 dígitos válidos.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            celularInput.style.border = "1.5px solid #FF3D51";
+            if (erroTelefoneSpan) {
+                erroTelefoneSpan.textContent = "Número inválido.";
+                erroTelefoneSpan.classList.add("visible");
+            }
+            celularInput.focus();
+            return;
+        }
+
+        // 🔁 Verificar duplicidade (ignorando o próprio cliente)
+        const resTel = await fetch(`/clientes/buscar?termo=${celular}`);
+        const resTelData = await resTel.json();
+
+        if (resTelData.some(c => c.numero_telefone === celular && c.id_clientes != clienteId)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Telefone já cadastrado',
+                text: 'Este número já está registrado no sistema.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            celularInput.style.border = "1.5px solid #FF3D51";
+            if (erroTelefoneSpan) {
+                erroTelefoneSpan.textContent = "Telefone já cadastrado.";
+                erroTelefoneSpan.classList.add("visible");
+            }
+            celularInput.focus();
+            return;
+        }
+
+        // ✅ Remove erro se estiver tudo certo
+        celularInput.style.border = "";
+        if (erroTelefoneSpan) {
+            erroTelefoneSpan.textContent = "";
+            erroTelefoneSpan.classList.remove("visible");
+        }
+    }
+
+    // ESTADO
+    if (estado && estado.length < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Estado inválido',
+            text: 'Digite pelo menos 2 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        estadoInput.style.border = "1.5px solid #FF3D51";
+        erroEstadoSpan.textContent = "Estado inválido.";
+        erroEstadoSpan.classList.add("visible");
+        estadoInput.focus();
+        return;
+    } else {
+        estadoInput.style.border = "";
+        erroEstadoSpan.textContent = "";
+        erroEstadoSpan.classList.remove("visible");
+    }
+
+    // CIDADE
+    if (cidade && cidade.length < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Cidade inválida',
+            text: 'Digite pelo menos 2 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cidadeInput.style.border = "1.5px solid #FF3D51";
+        erroCidadeSpan.textContent = "Cidade inválida.";
+        erroCidadeSpan.classList.add("visible");
+        cidadeInput.focus();
+        return;
+    } else {
+        cidadeInput.style.border = "";
+        erroCidadeSpan.textContent = "";
+        erroCidadeSpan.classList.remove("visible");
+    }
+
+    // BAIRRO
+    if (bairro && bairro.length < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Bairro inválido',
+            text: 'Digite pelo menos 2 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        bairroInput.style.border = "1.5px solid #FF3D51";
+        erroBairroSpan.textContent = "Bairro inválido.";
+        erroBairroSpan.classList.add("visible");
+        bairroInput.focus();
+        return;
+    } else {
+        bairroInput.style.border = "";
+        erroBairroSpan.textContent = "";
+        erroBairroSpan.classList.remove("visible");
+    }
+
+    // RUA
+    if (rua && rua.length < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rua inválida',
+            text: 'Digite pelo menos 2 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        ruaInput.style.border = "1.5px solid #FF3D51";
+        erroRuaSpan.textContent = "Rua inválida.";
+        erroRuaSpan.classList.add("visible");
+        ruaInput.focus();
+        return;
+    } else {
+        ruaInput.style.border = "";
+        erroRuaSpan.textContent = "";
+        erroRuaSpan.classList.remove("visible");
+    }
+
+    // COMPLEMENTO
+    if (complemento.length === 1) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Complemento inválido',
+            text: 'Se preencher, use pelo menos 2 caracteres.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        complementoInput.style.border = "1.5px solid #FF3D51";
+        erroComplementoSpan.textContent = "Complemento muito curto.";
+        erroComplementoSpan.classList.add("visible");
+        complementoInput.focus();
+        return;
+    } else {
+        complementoInput.style.border = "";
+        erroComplementoSpan.textContent = "";
+        erroComplementoSpan.classList.remove("visible");
+    }
 
     // ✅ Confirmação com SweetAlert2
     const confirmar = await Swal.fire({
