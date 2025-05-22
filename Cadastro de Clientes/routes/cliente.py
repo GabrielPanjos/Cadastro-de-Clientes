@@ -20,7 +20,7 @@ def obter_cliente():
         numero_telefone = request.form.get('numero_telefone', '').strip()
         cep = request.form.get('CEP', '').strip()
 
-        # Agora os campos opcionais não quebram o código se estiverem ausentes ou vazios
+        # Campos opcionais
         rg = request.form.get('RG', '').strip()
         estado = request.form.get('estado', '').strip()
         cidade = request.form.get('cidade', '').strip()
@@ -28,17 +28,51 @@ def obter_cliente():
         bairro = request.form.get('bairro', '').strip()
         complemento = request.form.get('complemento', '').strip()
 
+        # ✅ Validação obrigatória
         if not nome or not cpf or not data_nascimento:
             return jsonify({'error': 'Nome, CPF e Data de Nascimento são obrigatórios.'}), 400
 
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
+        # ✅ Verificação de duplicidade de CPF
+        cursor.execute("SELECT * FROM clientes WHERE cpf = %s", (cpf,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'CPF já cadastrado.'}), 400
+
+        # ✅ Verificação de duplicidade de RG (se preenchido)
+        if rg:
+            rg = re.sub(r'[^\d]', '', rg)
+            cursor.execute("SELECT * FROM clientes WHERE rg = %s", (rg,))
+            if cursor.fetchone():
+                conn.close()
+                return jsonify({'error': 'RG já cadastrado.'}), 400
+
+        # ✅ Verificação de duplicidade de email (se preenchido)
+        if email:
+            cursor.execute("SELECT * FROM clientes WHERE email = %s", (email,))
+            if cursor.fetchone():
+                conn.close()
+                return jsonify({'error': 'Email já cadastrado.'}), 400
+
+        # ✅ Verificação de duplicidade de número de telefone (se preenchido)
+        if numero_telefone:
+            cursor.execute("SELECT * FROM clientes WHERE numero_telefone = %s", (numero_telefone,))
+            if cursor.fetchone():
+                conn.close()
+                return jsonify({'error': 'Número de telefone já cadastrado.'}), 400
+
+        # ✅ Inserção segura
         cursor.execute('''
             INSERT INTO clientes 
             (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ''', (nome, cpf, rg, data_nascimento, numero_telefone, email, estado, cidade, rua, cep, bairro, complemento))
+        ''', (
+            nome, cpf, rg, data_nascimento,
+            numero_telefone, email,
+            estado, cidade, rua, cep, bairro, complemento
+        ))
 
         conn.commit()
         conn.close()

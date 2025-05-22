@@ -223,6 +223,17 @@ document.querySelector("form").addEventListener("submit", async function (event)
         return false;
     }
 
+    function validarTelefone(telefone) {
+        // Remove tudo que não é dígito
+        telefone = telefone.replace(/[^\d]/g, '');
+
+        // Verifica se tem 10 ou 11 dígitos
+        if (telefone.length === 10) return true; // Fixo com DDD
+        if (telefone.length === 11) return telefone[2] === '9'; // Celular com DDD
+
+        return false;
+    }
+
     function validarCPF(cpf) {
         cpf = cpf.replace(/[^\d]+/g, '');
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -239,17 +250,21 @@ document.querySelector("form").addEventListener("submit", async function (event)
     }
 
     // verificar celular
-    if (celular && !validarTelefone(celular)) {
+    const celularLimpo = celular.replace(/[^\d]/g, '');
+    const resTel = await fetch(`/clientes/buscar?termo=${celularLimpo}`);
+    const resTelData = await resTel.json();
+
+    if (resTelData.some(c => c.numero_telefone === celularLimpo)) {
         Swal.fire({
             icon: 'error',
-            title: 'Telefone inválido',
-            text: 'Número deve conter 10 ou 11 dígitos válidos',
+            title: 'Celular já cadastrado',
+            text: 'Este número de telefone já está registrado.',
             timer: 3000,
             showConfirmButton: false
         });
         celularInput.style.border = "1.5px solid #FF3D51";
         if (erroTelefoneSpan) {
-            erroTelefoneSpan.textContent = "Número inválido.";
+            erroTelefoneSpan.textContent = "Telefone já cadastrado.";
             erroTelefoneSpan.classList.add("visible");
         }
         celularInput.focus();
@@ -357,9 +372,11 @@ document.querySelector("form").addEventListener("submit", async function (event)
     }
 
     // verificar duplicidade de CPF
-    const resposta = await fetch(`/clientes/buscar?termo=${cpf}`);
-    const resultado = await resposta.json();
-    if (resultado.length > 0) {
+    const cpfLimpo = cpf.replace(/[^\d]+/g, '');
+    const resCpf = await fetch(`/clientes/buscar?termo=${cpfLimpo}`);
+    const resCpfData = await resCpf.json();
+
+    if (resCpfData.some(c => c.cpf === cpfLimpo)) {
         Swal.fire({
             icon: 'error',
             title: 'CPF já cadastrado',
@@ -462,30 +479,35 @@ document.querySelector("form").addEventListener("submit", async function (event)
         }
 
         // verificar duplicidade de email
-        const resEmail = await fetch(`/clientes/buscar?termo=${email}`);
-        const resEmailData = await resEmail.json();
-        if (resEmailData.some(c => c.email === email)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Email já cadastrado',
-                text: 'Este email já está registrado no sistema.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            emailInput.style.border = "1.5px solid #FF3D51";
-            if (erroEmailSpan) {
-                erroEmailSpan.textContent = "Email já cadastrado.";
-                erroEmailSpan.classList.add("visible");
+        // verificar duplicidade de email
+        if (email) {
+            const resEmail = await fetch(`/clientes/buscar?termo=${email}`);
+            const resEmailData = await resEmail.json();
+
+            if (resEmailData.some(c => c.email === email)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Email já cadastrado',
+                    text: 'Este email já está registrado no sistema.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                emailInput.style.border = "1.5px solid #FF3D51";
+                if (erroEmailSpan) {
+                    erroEmailSpan.textContent = "Email já cadastrado.";
+                    erroEmailSpan.classList.add("visible");
+                }
+                emailInput.focus();
+                return;
             }
-            emailInput.focus();
-            return;
         }
+
     }
 
     // verificar RG
-    if (rg) {
-        rg = rg.replace(/[^\d]+/g, ''); // 🔧 normaliza o RG para números apenas
+    const rgLimpo = rg.replace(/[^\d]+/g, '');
 
+    if (rg) {
         rgInput.style.border = "";
         if (erroRGSpan) {
             erroRGSpan.textContent = "";
@@ -493,9 +515,10 @@ document.querySelector("form").addEventListener("submit", async function (event)
         }
 
         // verificar duplicidade de RG
-        const resRG = await fetch(`/clientes/buscar?termo=${rg}`);
+        const resRG = await fetch(`/clientes/buscar?termo=${rgLimpo}`);
         const resRGData = await resRG.json();
-        if (resRGData.some(c => c.rg === rg)) {
+
+        if (resRGData.some(c => c.rg && c.rg.replace(/[^\d]+/g, '') === rgLimpo)) {
             Swal.fire({
                 icon: 'error',
                 title: 'RG já cadastrado',
@@ -541,11 +564,12 @@ document.querySelector("form").addEventListener("submit", async function (event)
     try {
         const formData = new FormData();
         formData.append("nome", nome);
-        formData.append("CPF", cpf);
+        formData.append("CPF", cpfLimpo);
         formData.append("data_nascimento", dataFormatada);
         formData.append("email", email);
         formData.append("numero_telefone", celular);
         formData.append("CEP", cep);
+        formData.append("RG", rgLimpo);
 
         const response = await fetch('/clientes/', {
             method: 'POST',
@@ -553,6 +577,7 @@ document.querySelector("form").addEventListener("submit", async function (event)
         });
 
         const result = await response.json();
+
         if (response.ok) {
             Swal.fire({
                 icon: 'success',
@@ -561,15 +586,69 @@ document.querySelector("form").addEventListener("submit", async function (event)
                 timer: 3000,
                 showConfirmButton: false
             });
+
+            // Limpa bordas e mensagens
+            [cpfInput, rgInput, emailInput, celularInput].forEach(input => input.style.border = "");
+            [erroCPFSpan, erroRGSpan, erroEmailSpan, erroTelefoneSpan].forEach(span => {
+                if (span) {
+                    span.textContent = "";
+                    span.classList.remove("visible");
+                }
+            });
+
         } else {
+            const erroMsg = result.error || "Erro desconhecido.";
+
+            // CPF
+            if (erroMsg.includes("CPF")) {
+                cpfInput.style.border = "1.5px solid #FF3D51";
+                if (erroCPFSpan) {
+                    erroCPFSpan.textContent = erroMsg;
+                    erroCPFSpan.classList.add("visible");
+                }
+                cpfInput.focus();
+            }
+
+            // RG
+            else if (erroMsg.includes("RG")) {
+                rgInput.style.border = "1.5px solid #FF3D51";
+                if (erroRGSpan) {
+                    erroRGSpan.textContent = erroMsg;
+                    erroRGSpan.classList.add("visible");
+                }
+                rgInput.focus();
+            }
+
+            // Email
+            else if (erroMsg.includes("Email")) {
+                emailInput.style.border = "1.5px solid #FF3D51";
+                if (erroEmailSpan) {
+                    erroEmailSpan.textContent = erroMsg;
+                    erroEmailSpan.classList.add("visible");
+                }
+                emailInput.focus();
+            }
+
+            // Telefone
+            else if (erroMsg.includes("telefone")) {
+                celularInput.style.border = "1.5px solid #FF3D51";
+                if (erroTelefoneSpan) {
+                    erroTelefoneSpan.textContent = erroMsg;
+                    erroTelefoneSpan.classList.add("visible");
+                }
+                celularInput.focus();
+            }
+
+            // Mensagem geral
             Swal.fire({
                 icon: 'error',
                 title: 'Erro ao cadastrar',
-                text: result.error || 'Erro desconhecido.',
+                text: erroMsg,
                 timer: 3000,
                 showConfirmButton: false
             });
         }
+
     } catch (error) {
         console.error("Erro ao enviar o formulário:", error);
         Swal.fire({
@@ -580,6 +659,7 @@ document.querySelector("form").addEventListener("submit", async function (event)
             showConfirmButton: false
         });
     }
+
 });
 
 document.getElementById("btn-pesquisar").addEventListener("click", () => {
@@ -691,141 +771,6 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
 
         });
 });
-
-/*
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('form-cadastro');
-
-    if (form) {
-        form.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(form);
-            const cpf = formData.get("CPF");
-
-            // Limpa pontos e traços do CPF antes de enviar
-            formData.set("CPF", cpf.replace(/[^\d]+/g, ""));
-
-            // Você pode fazer o mesmo com outros campos como CEP aqui no JS antes de enviar
-
-            try {
-                const response = await fetch('/clientes/', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                // --- PONTO CRÍTICO: VERIFIQUE response.ok ---
-                if (response.ok) { // Isso verifica se o status HTTP está no range 200-299
-                    const result = await response.json(); // Se OK, então o corpo é JSON
-                    console.log("Cadastro bem-sucedido:", result.message);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sucesso!',
-                        text: result.message, // Usa a mensagem que veio do Flask
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                    form.reset(); // Opcional: limpa o formulário após o sucesso
-                } else {
-                    // Se response.ok for false, significa que o servidor respondeu com um erro (4xx, 5xx)
-                    // Tente ler o JSON de erro, se houver
-                    let errorData;
-                    try {
-                        errorData = await response.json();
-                    } catch (e) {
-                        // Se o corpo não for JSON (ex: HTML de erro), capture o erro
-                        errorData = { error: 'Resposta do servidor não é JSON ou vazia.', status: response.status };
-                        console.error("Erro ao parsear JSON de erro:", e, response);
-                    }
-
-                    const errorMessage = errorData.error || `Erro desconhecido do servidor. Status: ${response.status}`;
-                    console.error("Erro do servidor:", errorMessage, errorData);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro no Cadastro',
-                        text: errorMessage,
-                        showConfirmButton: true
-                    });
-                }
-            } catch (error) {
-                // Este bloco 'catch' AGORA só será acionado se houver um problema REAL de rede
-                // (por exemplo, servidor offline, CORS bloqueando a requisição, etc.)
-                console.error("Erro de conexão (problema de rede real):", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro de conexão',
-                    text: 'Não foi possível se conectar ao servidor. Verifique sua conexão.',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            }
-        });
-    }
-});
-
-
-document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const clienteId = document.getElementById('editar-id').value;
-    const formData = new FormData(e.target);
-
-    // Conversão da data de nascimento
-    let dataOriginal = document.getElementById('editar-data_nascimento').value;
-    let dataConvertida = "";
-
-    const partesData = dataOriginal.split('/');
-    if (partesData.length === 3) {
-        const dia = parseInt(partesData[0], 10);
-        const mes = parseInt(partesData[1], 10); // Mantenha o mês como está
-        const ano = parseInt(partesData[2], 10);
-
-        // Formatar a data para AAAA-MM-DD sem conversão para UTC
-        dataConvertida = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        formData.set('data_nascimento', dataConvertida);
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Data de nascimento inválida. Use o formato dd/mm/aaaa',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
-        return;
-    }
-
-    // O restante do código para enviar o formData para o servidor
-    try {
-        const response = await fetch(`/clientes/${clienteId}/edit`, {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(data.message);
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao atualizar cliente',
-                showConfirmButton: false,
-                timer: 3000
-            });
-
-        }
-    } catch (err) {
-        console.error(err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro de conexão com o servidor',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
-    }
-});
-
-*/
 
 function configurarBotoesEditar() {
     const botoesEditar = document.getElementsByClassName('btn-editar');
