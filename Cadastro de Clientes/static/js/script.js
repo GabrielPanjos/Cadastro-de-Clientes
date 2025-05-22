@@ -178,122 +178,142 @@ document.getElementById("btn-proximo").addEventListener("click", () => {
 });
 
 document.querySelector("form").addEventListener("submit", async function (event) {
-    // 1. Obter os valores dos campos E os elementos dos inputs/spans de erro
+    event.preventDefault();
+
     const nomeInput = document.getElementById("nome");
     const nome = nomeInput.value.trim();
-    const erroNomeSpan = document.getElementById("nome-error"); // <-- OK, ID correto do span do nome
+    const erroNomeSpan = document.getElementById("nome-error");
 
-    // --- CORREÇÃO AQUI para o CPF ---
-    const cpfInput = document.getElementById("input-cpf"); // <-- OBTENDE O INPUT DO CPF PELO ID
+    const cpfInput = document.getElementById("input-cpf");
     const cpf = cpfInput.value.trim();
-    const erroCPFSpan = document.getElementById("cpf-error"); // <-- OK, ID correto do span do CPF
-    // --- FIM DA CORREÇÃO DO CPF ---
+    const erroCPFSpan = document.getElementById("cpf-error");
 
-    const inputData = document.getElementById("data_nascimento"); // Certifique-se que o ID para data é este
+    const inputData = document.getElementById("data_nascimento");
+    const erroDataSpan = document.getElementById("data-nascimento-error");
     let data_nascimento = inputData.value.trim();
 
-    const emailInput = document.getElementsByName("email")[0]; // Supondo que não tem ID para email input
+    const emailInput = document.getElementsByName("email")[0];
     const email = emailInput.value.trim();
+    const erroEmailSpan = document.getElementById("email-error");
 
-    const celularInput = document.getElementsByName("numero_telefone")[0]; // Supondo que não tem ID para celular input
+    const celularInput = document.getElementsByName("numero_telefone")[0];
     const celular = celularInput.value.trim();
+    const erroTelefoneSpan = document.getElementById("telefone-error");
 
-    const cepInput = document.getElementsByName("CEP")[0]; // Supondo que não tem ID para CEP input
+    const cepInput = document.getElementsByName("CEP")[0];
     const cep = cepInput.value.trim();
+    const erroCepSpan = document.getElementById("cep-error");
 
-    // Validação de Número de telefone
+    const rgInput = document.getElementById("input-rg");
+    let rg = rgInput.value.trim();
+    const erroRGSpan = document.getElementById("rg-error");
+
+
     function validarTelefone(telefone) {
         telefone = telefone.replace(/[^\d]/g, '');
 
         if (telefone.length === 10) {
-            return true; // Fixo: DDD + número fixo
+            return true; // fixo: DDD (2) + número (8)
         }
 
         if (telefone.length === 11) {
-            return telefone[2] === '9'; // Celular: DDD + 9 + número
+            return telefone[2] === '9'; // celular: DDD (2) + 9 + número (8)
         }
 
         return false;
     }
 
-    // Validador de CPF
     function validarCPF(cpf) {
-        cpf = cpf.replace(/[^\d]+/g, ''); // remove pontos e traços
-
+        cpf = cpf.replace(/[^\d]+/g, '');
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-
         let soma = 0;
-        for (let i = 0; i < 9; i++) {
-            soma += parseInt(cpf.charAt(i)) * (10 - i);
-        }
-
+        for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
         let digito1 = 11 - (soma % 11);
         digito1 = (digito1 >= 10) ? 0 : digito1;
-
         if (digito1 !== parseInt(cpf.charAt(9))) return false;
-
         soma = 0;
-        for (let i = 0; i < 10; i++) {
-            soma += parseInt(cpf.charAt(i)) * (11 - i);
-        }
-
+        for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
         let digito2 = 11 - (soma % 11);
         digito2 = (digito2 >= 10) ? 0 : digito2;
-
         return digito2 === parseInt(cpf.charAt(10));
     }
 
-    // Validações
-    // VALIDAÇÃO DO NÚMERO DO CELULAR
+    // verificar celular
     if (celular && !validarTelefone(celular)) {
         Swal.fire({
             icon: 'error',
             title: 'Telefone inválido',
             text: 'Número deve conter 10 ou 11 dígitos válidos',
-            showConfirmButton: false,
-            timer: 3000
+            timer: 3000,
+            showConfirmButton: false
         });
+        celularInput.style.border = "1.5px solid #FF3D51";
+        if (erroTelefoneSpan) {
+            erroTelefoneSpan.textContent = "Número inválido.";
+            erroTelefoneSpan.classList.add("visible");
+        }
         celularInput.focus();
-        event.preventDefault();
         return;
+    } else {
+        celularInput.style.border = "";
+        if (erroTelefoneSpan) {
+            erroTelefoneSpan.textContent = "";
+            erroTelefoneSpan.classList.remove("visible");
+        }
+
+        // verificar duplicidade de celular
+        if (celular) {
+            const resTel = await fetch(`/clientes/buscar?termo=${celular}`);
+            const resTelData = await resTel.json();
+            if (resTelData.some(c => c.numero_telefone === celular)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Celular já cadastrado',
+                    text: 'Este número de telefone já está registrado.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                celularInput.style.border = "1.5px solid #FF3D51";
+                if (erroTelefoneSpan) {
+                    erroTelefoneSpan.textContent = "Telefone já cadastrado.";
+                    erroTelefoneSpan.classList.add("visible");
+                }
+                celularInput.focus();
+                return;
+            }
+        }
     }
 
-    // --- VALIDAÇÃO DE NOME ---
+    // verificar nome
     const nomeRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
-    let nomeValido = true;
-    let mensagemErroNome = "";
-
     if (nome === "") {
         Swal.fire({
             icon: 'error',
             title: 'Nome obrigatório',
-            showConfirmButton: false,
-            timer: 3000
+            timer: 3000,
+            showConfirmButton: false
         });
+        nomeInput.style.border = "1.5px solid #FF3D51";
+        if (erroNomeSpan) {
+            erroNomeSpan.textContent = "Nome é obrigatório.";
+            erroNomeSpan.classList.add("visible");
+        }
         nomeInput.focus();
-        nomeValido = false;
-        mensagemErroNome = "Nome é obrigatório.";
+        return;
     } else if (!nomeRegex.test(nome)) {
         Swal.fire({
             icon: 'error',
             title: 'Nome inválido',
             text: 'O nome deve conter apenas letras e espaços.',
-            showConfirmButton: false,
-            timer: 3000
+            timer: 3000,
+            showConfirmButton: false
         });
-        nomeInput.focus();
-        nomeValido = false;
-        mensagemErroNome = "O nome deve conter apenas letras e espaços.";
-    }
-
-    // Aplica a borda vermelha e a mensagem no span do nome, ou remove
-    if (!nomeValido) {
         nomeInput.style.border = "1.5px solid #FF3D51";
-        if (erroNomeSpan) { // Verifica se o span existe
-            erroNomeSpan.textContent = mensagemErroNome;
+        if (erroNomeSpan) {
+            erroNomeSpan.textContent = "O nome deve conter apenas letras e espaços.";
             erroNomeSpan.classList.add("visible");
         }
-        event.preventDefault();
+        nomeInput.focus();
         return;
     } else {
         nomeInput.style.border = "";
@@ -303,118 +323,221 @@ document.querySelector("form").addEventListener("submit", async function (event)
         }
     }
 
-    // VALIDAÇÃO DO CPF
+    // verificar cpf
     if (cpf === "") {
         Swal.fire({
             icon: 'error',
             title: 'CPF obrigatório',
-            showConfirmButton: false,
-            timer: 3000
+            timer: 3000,
+            showConfirmButton: false
         });
         cpfInput.focus();
-        event.preventDefault();
-        return;
-    }
-    if (cpf === "") {
-        Swal.fire({
-            icon: 'error',
-            title: 'CPF obrigatório',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        cpfInput.focus();
-        event.preventDefault();
         return;
     }
     if (!validarCPF(cpf)) {
-        if (erroCPFSpan) { // Verifica se o span existe
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF inválido',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cpfInput.style.border = "1.5px solid #FF3D51";
+        if (erroCPFSpan) {
             erroCPFSpan.textContent = "CPF inválido.";
             erroCPFSpan.classList.add("visible");
         }
-        cpfInput.style.border = "1.5px solid #FF3D51";
-        event.preventDefault();
+        cpfInput.focus();
         return;
     } else {
+        cpfInput.style.border = "";
         if (erroCPFSpan) {
             erroCPFSpan.textContent = "";
             erroCPFSpan.classList.remove("visible");
         }
-        cpfInput.style.border = "";
     }
 
-    // Remove não dígitos
+    // verificar duplicidade de CPF
+    const resposta = await fetch(`/clientes/buscar?termo=${cpf}`);
+    const resultado = await resposta.json();
+    if (resultado.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'CPF já cadastrado',
+            text: 'Este CPF já está registrado no sistema.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        cpfInput.style.border = "1.5px solid #FF3D51";
+        if (erroCPFSpan) {
+            erroCPFSpan.textContent = "CPF já cadastrado.";
+            erroCPFSpan.classList.add("visible");
+        }
+        cpfInput.focus();
+        return;
+    }
+
+    // verificar data de nascimento
     data_nascimento = data_nascimento.replace(/\D/g, "");
     if (data_nascimento.length !== 8) {
-        const erroData = document.getElementById("data-nascimento-error");
-        erroData.textContent = "Data inválida. Use o formato dd/mm/aaaa.";
-        erroData.classList.add("visible");
+        Swal.fire({
+            icon: 'error',
+            title: 'Data inválida',
+            text: 'Use o formato dd/mm/aaaa.',
+            timer: 3000,
+            showConfirmButton: false
+        });
         inputData.style.border = "1.5px solid #FF3D51";
-        event.preventDefault();
+        if (erroDataSpan) {
+            erroDataSpan.textContent = "Data inválida. Use o formato dd/mm/aaaa.";
+            erroDataSpan.classList.add("visible");
+        }
+        inputData.focus();
         return;
     } else {
-        const erroData = document.getElementById("data-nascimento-error");
-        erroData.textContent = "";
-        erroData.classList.remove("visible");
         inputData.style.border = "";
+        if (erroDataSpan) {
+            erroDataSpan.textContent = "";
+            erroDataSpan.classList.remove("visible");
+        }
     }
 
     const dia = parseInt(data_nascimento.substring(0, 2));
     const mes = parseInt(data_nascimento.substring(2, 4));
     const ano = parseInt(data_nascimento.substring(4, 8));
-
     const data = new Date(ano, mes - 1, dia);
     if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
         Swal.fire({
             icon: 'error',
             title: 'Data inválida',
-            showConfirmButton: false,
-            timer: 3000
+            timer: 3000,
+            showConfirmButton: false
         });
         inputData.focus();
-        event.preventDefault();
         return;
     }
 
     const dataFormatada = `${ano.toString().padStart(4, '0')}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
     inputData.value = dataFormatada;
 
-    if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Formato de Email inválido',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        emailInput.focus();
-        event.preventDefault();
-        return;
+    // verificar email
+    if (email) {
+        let emailValido = true;
+        let mensagemErroEmail = "";
+
+        if (!email.includes("@")) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve conter '@'.";
+        } else if (!/(gmail|hotmail|outlook)/i.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve conter domínio válido (gmail, hotmail ou outlook).";
+        } else if (!/\.[a-z]{2,}$/.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Email deve terminar com domínio (.com, .net etc).";
+        } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            emailValido = false;
+            mensagemErroEmail = "Formato de email inválido.";
+        }
+
+        if (!emailValido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Email inválido',
+                text: mensagemErroEmail,
+                timer: 3000,
+                showConfirmButton: false
+            });
+            emailInput.style.border = "1.5px solid #FF3D51";
+            if (erroEmailSpan) {
+                erroEmailSpan.textContent = mensagemErroEmail;
+                erroEmailSpan.classList.add("visible");
+            }
+            emailInput.focus();
+            return;
+        } else {
+            emailInput.style.border = "";
+            if (erroEmailSpan) {
+                erroEmailSpan.textContent = "";
+                erroEmailSpan.classList.remove("visible");
+            }
+        }
+
+        // verificar duplicidade de email
+        const resEmail = await fetch(`/clientes/buscar?termo=${email}`);
+        const resEmailData = await resEmail.json();
+        if (resEmailData.some(c => c.email === email)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Email já cadastrado',
+                text: 'Este email já está registrado no sistema.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            emailInput.style.border = "1.5px solid #FF3D51";
+            if (erroEmailSpan) {
+                erroEmailSpan.textContent = "Email já cadastrado.";
+                erroEmailSpan.classList.add("visible");
+            }
+            emailInput.focus();
+            return;
+        }
     }
 
-    if (celular && !/^\d{10,11}$/.test(celular)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Celular deve ter 10 ou 11 digitos numéricos',
-            showConfirmButton: false,
-            timer: 3000
-        });
-        celularInput.focus();
-        event.preventDefault();
-        return;
+    // verificar RG
+    if (rg) {
+        rg = rg.replace(/[^\d]+/g, ''); // 🔧 normaliza o RG para números apenas
+
+        rgInput.style.border = "";
+        if (erroRGSpan) {
+            erroRGSpan.textContent = "";
+            erroRGSpan.classList.remove("visible");
+        }
+
+        // verificar duplicidade de RG
+        const resRG = await fetch(`/clientes/buscar?termo=${rg}`);
+        const resRGData = await resRG.json();
+        if (resRGData.some(c => c.rg === rg)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'RG já cadastrado',
+                text: 'Este RG já está registrado no sistema.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            rgInput.style.border = "1.5px solid #FF3D51";
+            if (erroRGSpan) {
+                erroRGSpan.textContent = "RG já cadastrado.";
+                erroRGSpan.classList.add("visible");
+            }
+            rgInput.focus();
+            return;
+        }
     }
 
+    // verificar cep
     if (cep && !/^\d{8}$/.test(cep)) {
         Swal.fire({
             icon: 'error',
-            title: 'CEP não encontrado',
-            showConfirmButton: false,
-            timer: 3000
+            title: 'CEP inválido',
+            text: 'CEP deve conter exatamente 8 dígitos numéricos.',
+            timer: 3000,
+            showConfirmButton: false
         });
+        cepInput.style.border = "1.5px solid #FF3D51";
+        if (erroCepSpan) {
+            erroCepSpan.textContent = "CEP inválido.";
+            erroCepSpan.classList.add("visible");
+        }
         cepInput.focus();
-        event.preventDefault();
         return;
+    } else {
+        cepInput.style.border = "";
+        if (erroCepSpan) {
+            erroCepSpan.textContent = "";
+            erroCepSpan.classList.remove("visible");
+        }
     }
 
-    // **Aqui é onde você deve adicionar o fetch para enviar os dados**
+
     try {
         const formData = new FormData();
         formData.append("nome", nome);
@@ -423,7 +546,6 @@ document.querySelector("form").addEventListener("submit", async function (event)
         formData.append("email", email);
         formData.append("numero_telefone", celular);
         formData.append("CEP", cep);
-        // Adicione outros campos conforme necessário
 
         const response = await fetch('/clientes/', {
             method: 'POST',
@@ -439,7 +561,6 @@ document.querySelector("form").addEventListener("submit", async function (event)
                 timer: 3000,
                 showConfirmButton: false
             });
-            // Opcional: Redirecionar ou limpar o formulário
         } else {
             Swal.fire({
                 icon: 'error',
@@ -571,6 +692,7 @@ document.getElementById("btn-pesquisar").addEventListener("click", () => {
         });
 });
 
+/*
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('form-cadastro');
 
@@ -641,7 +763,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-/*
 
 document.getElementById('form-editar-cliente').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -820,7 +941,6 @@ document.querySelector(".btn-deletar").addEventListener("click", async function 
     }
 });
 
-
 async function atualizarCliente(e) {
     if (e) e.preventDefault();
     const clienteId = document.getElementById("editar-id").value;
@@ -918,7 +1038,6 @@ async function atualizarCliente(e) {
             console.error("Erro na requisição:", error);
         });
 }
-
 
 document.querySelectorAll(".btn-salvar").forEach(botao => {
     botao.addEventListener("click", atualizarCliente);

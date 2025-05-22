@@ -14,19 +14,22 @@ def obter_cliente():
         print("Dados do formulário:", request.form)
 
         nome = request.form.get('nome', '').strip()
-        cpf = request.form.get('CPF', '').strip()
+        cpf = re.sub(r'[^0-9]', '', request.form.get('CPF', '').strip())
         data_nascimento = request.form.get('data_nascimento', '').strip()
         email = request.form.get('email', '').strip()
         numero_telefone = request.form.get('numero_telefone', '').strip()
         cep = request.form.get('CEP', '').strip()
 
-        # Se todas as validações passarem, continua com o cadastro
-        rg = request.form['RG']
-        estado = request.form['estado']
-        cidade = request.form['cidade']
-        rua = request.form['rua']
-        bairro = request.form['bairro']
-        complemento = request.form['complemento']
+        # Agora os campos opcionais não quebram o código se estiverem ausentes ou vazios
+        rg = request.form.get('RG', '').strip()
+        estado = request.form.get('estado', '').strip()
+        cidade = request.form.get('cidade', '').strip()
+        rua = request.form.get('rua', '').strip()
+        bairro = request.form.get('bairro', '').strip()
+        complemento = request.form.get('complemento', '').strip()
+
+        if not nome or not cpf or not data_nascimento:
+            return jsonify({'error': 'Nome, CPF e Data de Nascimento são obrigatórios.'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -44,7 +47,7 @@ def obter_cliente():
 
     except Exception as e:
         print("Erro no servidor:", e)
-        traceback.print_exc()  # Imprime o traceback completo
+        traceback.print_exc()
         return jsonify({"error": "Erro interno no servidor."}), 500
 
 @cliente_route.route('/')
@@ -203,7 +206,7 @@ def atualizar_cliente_post(cliente_id):
 
         # Obter dados do formulário
         nome = request.form.get('nome', '').strip()
-        cpf = request.form.get('CPF', '').strip()
+        cpf = re.sub(r'[^0-9]', '', request.form.get('CPF', '').strip())
         rg = request.form.get('RG', '').strip()
         numero_telefone = request.form.get('numero_telefone', '').strip()
         email = request.form.get('email', '').strip()
