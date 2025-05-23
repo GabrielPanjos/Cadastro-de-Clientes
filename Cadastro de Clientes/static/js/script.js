@@ -228,6 +228,13 @@ document.querySelector("form").addEventListener("submit", async function (event)
     const complemento = complementoInput.value.trim();
     const erroComplementoSpan = document.getElementById("complemento-error");
 
+    function validarRG(rg) {
+        rg = rg.replace(/[^\d]/g, '');
+        if (!/^\d{5,15}$/.test(rg)) return false;
+        if (/^(\d)\1+$/.test(rg)) return false;
+        return true;
+    }
+
     function validarTelefone(telefone) {
         telefone = telefone.replace(/[^\d]/g, '');
 
@@ -640,7 +647,25 @@ document.querySelector("form").addEventListener("submit", async function (event)
             erroRGSpan.classList.remove("visible");
         }
 
-        // verificar duplicidade de RG
+        // Validação de RG com função
+        if (!validarRG(rg)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'RG inválido',
+                text: 'O RG deve conter entre 5 e 15 dígitos e não pode ter todos os dígitos iguais.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            rgInput.style.border = "1.5px solid #FF3D51";
+            if (erroRGSpan) {
+                erroRGSpan.textContent = "RG inválido.";
+                erroRGSpan.classList.add("visible");
+            }
+            rgInput.focus();
+            return;
+        }
+
+        // Duplicidade de RG
         const resRG = await fetch(`/clientes/buscar?termo=${rgLimpo}`);
         const resRGData = await resRG.json();
 
@@ -713,8 +738,10 @@ document.querySelector("form").addEventListener("submit", async function (event)
                 icon: 'success',
                 title: 'Cadastro realizado com sucesso!',
                 text: result.message,
-                timer: 3000,
+                timer: 2000,
                 showConfirmButton: false
+            }).then(() => {
+                location.reload(); // Recarrega a página após o alerta
             });
 
             // Limpa bordas e mensagens
@@ -1227,53 +1254,6 @@ async function atualizarCliente(e) {
         }
     }
 
-    // Se tiver RG preenchido
-    if (rg) {
-        const rgLimpo = rg.replace(/[^\d]+/g, '');
-
-        // ✅ Verifica se é só número e tem entre 5 e 15 dígitos
-        if (!/^\d{5,15}$/.test(rgLimpo)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'RG inválido',
-                text: 'O RG deve conter apenas números entre 5 e 15 dígitos.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            rgInput.style.border = "1.5px solid #FF3D51";
-            if (erroRGSpan) {
-                erroRGSpan.textContent = "RG inválido.";
-                erroRGSpan.classList.add("visible");
-            }
-            rgInput.focus();
-            return;
-        }
-
-        // 🔁 Verificar duplicidade (ignorar se for do mesmo cliente)
-        const resRG = await fetch(`/clientes/buscar?termo=${rgLimpo}`);
-        const resRGData = await resRG.json();
-
-        if (resRGData.some(c => c.rg && c.rg.replace(/[^\d]+/g, '') === rgLimpo && c.id_clientes != clienteId)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'RG já cadastrado',
-                text: 'Este RG já está registrado no sistema.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            rgInput.style.border = "1.5px solid #FF3D51";
-            if (erroRGSpan) {
-                erroRGSpan.textContent = "RG já cadastrado.";
-                erroRGSpan.classList.add("visible");
-            }
-            rgInput.focus();
-            return;
-        }
-
-        // ✅ Tudo certo com o RG → atualiza a variável com valor limpo
-        rg = rgLimpo;
-    }
-
     // RG vazio ou válido → limpa estilos de erro
     rgInput.style.border = "";
     if (erroRGSpan) {
@@ -1518,7 +1498,7 @@ async function atualizarCliente(e) {
             rg,
             data_nascimento: dataNascimentoFormatada,
             email,
-            numero_telefone: telefone,
+            numero_telefone: celular,
             estado,
             cidade,
             rua,
